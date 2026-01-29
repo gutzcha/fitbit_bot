@@ -1,0 +1,8 @@
+{
+    "provider": "anthropic",
+    "slow_fallback_enabled": true,
+    "slow_fallback_min_confidence": 0.8,
+    "system_prompt_version": "v1",
+    "max_history_limit": 10,
+    "user_id": 2022484408
+}
