@@ -3,11 +3,8 @@ from langchain_core.messages import AIMessage, HumanMessage
 from graph.helpers import extract_json_from_markdown
 from graph.process.agents.sql_agent import build_sql_agent
 from graph.process.schemas import SQLAgentResponse
-from tests.live_utils import (
-    SAMPLE_QUESTION,
-    get_runtime_node,
-    load_runtime_config,
-)
+from tests.live_utils import (SAMPLE_QUESTION, get_runtime_node,
+                              load_runtime_config)
 
 
 def _extract_sql_response(raw_result) -> SQLAgentResponse:

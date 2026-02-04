@@ -1,13 +1,16 @@
 """
 graph.process.rag_retriever.nodes.retriever
 """
-from typing import Any, Dict, Callable
 
-from graph.process.rag_retriever.rag_state import GraphState
+from typing import Any, Callable, Dict
+
 from graph.process.rag_retriever.chains.retriever import make_retriever
+from graph.process.rag_retriever.rag_state import GraphState
 
 
-def make_retrieve_node(config: Dict[str, Any]) -> Callable[[GraphState], Dict[str, Any]]:
+def make_retrieve_node(
+    config: Dict[str, Any],
+) -> Callable[[GraphState], Dict[str, Any]]:
     """
     Factory for the RETRIEVE node.
     """

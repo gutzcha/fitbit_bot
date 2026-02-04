@@ -16,8 +16,9 @@ project_root = os.path.dirname(current_dir)
 if project_root not in sys.path:
     sys.path.append(project_root)
 
-from graph.consts import ENV_PATH
 from dotenv import load_dotenv
+
+from graph.consts import ENV_PATH
 
 is_loaded = load_dotenv(ENV_PATH, override=True)
 
@@ -50,6 +51,7 @@ DEFAULT_CURRENT_USER_ID = 1503960366
 
 # ---------------- HELPERS ----------------
 
+
 def save_config(config: Dict[str, Any]) -> None:
     try:
         with open(CHAT_CONFIG_PATH, "w") as f:
@@ -73,7 +75,9 @@ def rebuild_graph(config: Dict[str, Any]) -> None:
     st.session_state.config = config
 
     try:
-        st.session_state.graph.get_graph().draw_mermaid_png(output_file_path="graph.png")
+        st.session_state.graph.get_graph().draw_mermaid_png(
+            output_file_path="graph.png"
+        )
     except Exception:
         pass
 
@@ -103,7 +107,9 @@ def init_session() -> None:
             user_id = st.session_state.config.get("user_id", user_id)
 
         st.session_state.memory_manager = MemoryManager(user_id=user_id)
-        st.session_state.user_profile = st.session_state.memory_manager.load_user_profile()
+        st.session_state.user_profile = (
+            st.session_state.memory_manager.load_user_profile()
+        )
 
 
 def reset_conversation() -> None:
@@ -119,7 +125,9 @@ def get_runtime_node_cfg(config: Dict[str, Any], path: str) -> Dict[str, Any]:
     return node_cfg if isinstance(node_cfg, dict) else {}
 
 
-def set_runtime_node_cfg(config: Dict[str, Any], path: str, node_cfg: Dict[str, Any]) -> Dict[str, Any]:
+def set_runtime_node_cfg(
+    config: Dict[str, Any], path: str, node_cfg: Dict[str, Any]
+) -> Dict[str, Any]:
     config = dict(config)
     runtime_nodes = dict(config.get("runtime_nodes", {}))
     runtime_nodes[path] = node_cfg
@@ -127,7 +135,9 @@ def set_runtime_node_cfg(config: Dict[str, Any], path: str, node_cfg: Dict[str, 
     return config
 
 
-def _extract_response_and_suggestion(node_name: str, state_update: Dict[str, Any]) -> Tuple[Optional[str], Optional[str]]:
+def _extract_response_and_suggestion(
+    node_name: str, state_update: Dict[str, Any]
+) -> Tuple[Optional[str], Optional[str]]:
     """
     Returns (response_text, suggestion_text).
 
@@ -161,11 +171,19 @@ def _extract_response_and_suggestion(node_name: str, state_update: Dict[str, Any
     exec_res = state_update.get("execution_result")
     if exec_res is not None and response_text is None:
         if isinstance(exec_res, dict):
-            r = exec_res.get("response") or exec_res.get("answer") or exec_res.get("output")
+            r = (
+                exec_res.get("response")
+                or exec_res.get("answer")
+                or exec_res.get("output")
+            )
             if isinstance(r, str) and r.strip():
                 response_text = r.strip()
         else:
-            r = getattr(exec_res, "response", None) or getattr(exec_res, "answer", None) or getattr(exec_res, "output", None)
+            r = (
+                getattr(exec_res, "response", None)
+                or getattr(exec_res, "answer", None)
+                or getattr(exec_res, "output", None)
+            )
             if isinstance(r, str) and r.strip():
                 response_text = r.strip()
 
@@ -192,8 +210,12 @@ with st.sidebar:
         st.subheader("Runtime Nodes")
 
         cfg_intent = get_runtime_node_cfg(st.session_state.config, "graph.nodes.intent")
-        cfg_exec = get_runtime_node_cfg(st.session_state.config, "graph.process.nodes.execution")
-        cfg_suggestor = get_runtime_node_cfg(st.session_state.config, "graph.process.nodes.suggestor")
+        cfg_exec = get_runtime_node_cfg(
+            st.session_state.config, "graph.process.nodes.execution"
+        )
+        cfg_suggestor = get_runtime_node_cfg(
+            st.session_state.config, "graph.process.nodes.suggestor"
+        )
 
         intent_model = cfg_intent.get("llm", {}).get("model", "ollama:qwen3:8b")
         confidence_threshold = float(cfg_intent.get("confidence_threshold", 0.7))
@@ -235,16 +257,22 @@ with st.sidebar:
             cfg_intent_new = dict(cfg_intent)
             cfg_intent_new["llm"] = {"model": intent_model_new}
             cfg_intent_new["confidence_threshold"] = float(confidence_threshold_new)
-            new_config = set_runtime_node_cfg(new_config, "graph.nodes.intent", cfg_intent_new)
+            new_config = set_runtime_node_cfg(
+                new_config, "graph.nodes.intent", cfg_intent_new
+            )
 
             cfg_exec_new = dict(cfg_exec)
             cfg_exec_new["max_history_limit"] = int(max_history_limit_new)
             cfg_exec_new["max_iterations"] = int(max_iterations_new)
-            new_config = set_runtime_node_cfg(new_config, "graph.process.nodes.execution", cfg_exec_new)
+            new_config = set_runtime_node_cfg(
+                new_config, "graph.process.nodes.execution", cfg_exec_new
+            )
 
             cfg_suggestor_new = dict(cfg_suggestor)
             cfg_suggestor_new["enabled"] = bool(suggestor_enabled_new)
-            new_config = set_runtime_node_cfg(new_config, "graph.process.nodes.suggestor", cfg_suggestor_new)
+            new_config = set_runtime_node_cfg(
+                new_config, "graph.process.nodes.suggestor", cfg_suggestor_new
+            )
 
             save_config(new_config)
             rebuild_graph(new_config)
@@ -256,7 +284,9 @@ with st.sidebar:
     st.subheader("User profile")
     if st.session_state.user_profile:
         prof = st.session_state.user_profile
-        with st.expander(f"User ID: {getattr(prof, 'user_id', 'unknown')}", expanded=False):
+        with st.expander(
+            f"User ID: {getattr(prof, 'user_id', 'unknown')}", expanded=False
+        ):
             if hasattr(prof, "model_dump"):
                 st.json(prof.model_dump())
             else:
@@ -314,7 +344,9 @@ if prompt := st.chat_input("How are my steps looking today?"):
                         continue
 
                     if not isinstance(state_update, dict):
-                        status_container.write(f"{node_name}: non-dict update: {type(state_update)}")
+                        status_container.write(
+                            f"{node_name}: non-dict update: {type(state_update)}"
+                        )
                         continue
 
                     if node_name == "INTENT":
@@ -333,7 +365,9 @@ if prompt := st.chat_input("How are my steps looking today?"):
                     elif node_name == "SUGGESTOR":
                         status_container.write("Suggestor: evaluating")
 
-                    resp_text, sugg_text = _extract_response_and_suggestion(node_name, state_update)
+                    resp_text, sugg_text = _extract_response_and_suggestion(
+                        node_name, state_update
+                    )
 
                     # Always show the main response as soon as we can
                     if isinstance(resp_text, str) and resp_text.strip():
@@ -353,16 +387,21 @@ if prompt := st.chat_input("How are my steps looking today?"):
                 if final_suggestion:
                     combined = f"{final_response}\n\n{final_suggestion}"
 
-                st.session_state.messages.append({"role": "assistant", "content": combined})
+                st.session_state.messages.append(
+                    {"role": "assistant", "content": combined}
+                )
                 st.session_state.turn_count += 1
                 st.session_state.debug_trace = debug_trace
             else:
-                message_placeholder.error("The agent completed but returned no response.")
+                message_placeholder.error(
+                    "The agent completed but returned no response."
+                )
 
         except Exception as e:
             status_container.update(label="Error", state="error")
             st.error(f"Execution failed: {str(e)}")
             import traceback
+
             traceback.print_exc()
 
 if st.session_state.debug_trace:

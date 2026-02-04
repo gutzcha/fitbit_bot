@@ -8,14 +8,16 @@ from typing import Any, Callable, Dict
 from langchain.chat_models import init_chat_model
 from langchain_core.messages import AIMessage, BaseMessage, SystemMessage
 
+from graph.helpers import build_context_messages, extract_json_from_markdown
 from graph.memory import trim_conversation_history
 from graph.process.agents.execution import build_execution_agent
 from graph.process.schemas import ExecutionResponse
 from graph.state import AssistantState
-from graph.helpers import extract_json_from_markdown, build_context_messages
 
 
-def extract_execution_response_from_messages(messages: list[BaseMessage]) -> ExecutionResponse:
+def extract_execution_response_from_messages(
+    messages: list[BaseMessage],
+) -> ExecutionResponse:
     """
     Extract ExecutionResponse from the message list.
 
@@ -47,13 +49,12 @@ def extract_execution_response_from_messages(messages: list[BaseMessage]) -> Exe
                 if "answer" in json_data and "confidence" in json_data:
                     return ExecutionResponse.model_validate(json_data)
 
-
             except (ValueError, Exception):
                 return ExecutionResponse(
                     answer=json.dumps(content),
                     confidence=0.0,
                     needs_clarification=True,
-                    clarification_question="Could you rephrase your question?"
+                    clarification_question="Could you rephrase your question?",
                 )
 
                 continue
@@ -61,7 +62,9 @@ def extract_execution_response_from_messages(messages: list[BaseMessage]) -> Exe
     raise ValueError("Could not find valid ExecutionResponse in messages")
 
 
-def make_process_node(full_config: Dict[str, Any]) -> Callable[[AssistantState], Dict[str, Any]]:
+def make_process_node(
+    full_config: Dict[str, Any],
+) -> Callable[[AssistantState], Dict[str, Any]]:
     """
     PROCESS is a single node.
     It owns LLM + agent construction, runs the execution agent, and writes the final answer
@@ -128,7 +131,9 @@ def make_process_node(full_config: Dict[str, Any]) -> Callable[[AssistantState],
             agent_input,
             config={"recursion_limit": max_iterations},
         )
-        messages_list = raw_result.get("messages", []) if isinstance(raw_result, dict) else []
+        messages_list = (
+            raw_result.get("messages", []) if isinstance(raw_result, dict) else []
+        )
 
         # Extract ExecutionResponse - try multiple methods
         exec_result = None
@@ -154,9 +159,13 @@ def make_process_node(full_config: Dict[str, Any]) -> Callable[[AssistantState],
         if exec_result is None:
             if messages_list:
                 try:
-                    exec_result = extract_execution_response_from_messages(messages_list)
+                    exec_result = extract_execution_response_from_messages(
+                        messages_list
+                    )
                 except ValueError as e:
-                    print(f"Warning: Could not extract ExecutionResponse from messages: {e}")
+                    print(
+                        f"Warning: Could not extract ExecutionResponse from messages: {e}"
+                    )
 
         # Final fallback: construct a basic response
         if exec_result is None:
@@ -166,7 +175,7 @@ def make_process_node(full_config: Dict[str, Any]) -> Callable[[AssistantState],
                 answer="I processed your request but encountered an issue generating a structured response.",
                 confidence=0.0,
                 needs_clarification=True,
-                clarification_question="Could you rephrase your question?"
+                clarification_question="Could you rephrase your question?",
             )
 
         # Extract the answer

@@ -1,11 +1,10 @@
 # graph/process/tools/sql_metrics.py
 
+import json
 from typing import Any, Dict
 
-from langchain_core.messages import HumanMessage
+from langchain_core.messages import AIMessage, HumanMessage
 from langchain_core.tools import Tool, tool
-import json
-from langchain_core.messages import AIMessage
 
 from graph.helpers import get_current_date
 # Assuming you have refactored this builder to accept configs as well
@@ -33,8 +32,7 @@ def make_sql_tool(agent_config: Dict[str, Any], validation_config: Dict[str, Any
     # 2. Build the Agent Instance (ONCE)
     # We build the agent here so we don't re-initialize the LLM on every tool call.
     agent = build_sql_agent(
-        agent_config=agent_config,
-        validation_config=validation_config
+        agent_config=agent_config, validation_config=validation_config
     )
 
     # 3. Define the tool function (Closure)
@@ -78,7 +76,9 @@ def make_sql_tool(agent_config: Dict[str, Any], validation_config: Dict[str, Any
             )
 
             messages = result.get("messages", [])
-            last_ai = next((m for m in reversed(messages) if isinstance(m, AIMessage)), None)
+            last_ai = next(
+                (m for m in reversed(messages) if isinstance(m, AIMessage)), None
+            )
 
             if last_ai and isinstance(last_ai.content, str) and last_ai.content.strip():
                 text = last_ai.content.strip()

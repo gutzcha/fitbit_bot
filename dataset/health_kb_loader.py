@@ -18,7 +18,9 @@ from langchain_core.documents import Document
 from langchain_ollama import OllamaEmbeddings
 from langchain_openai import OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from dataset.dataset_config import  INGESTION_CONFIG, STRATEGY_MAP, EMBEDDING_PROVIDERS
+
+from dataset.dataset_config import (EMBEDDING_PROVIDERS, INGESTION_CONFIG,
+                                    STRATEGY_MAP)
 
 # ─────────────────────────────────────────────────────────────────────────────
 # CORE LOGIC
@@ -105,15 +107,16 @@ def generate_health_knowledge_base():
 
     # 2. Setup Embeddings
     model_cfg = INGESTION_CONFIG["models"]
-    embedding_provider = model_cfg['embedding_provider']
+    embedding_provider = model_cfg["embedding_provider"]
     if embedding_provider == "ollama":
         embedding_class = OllamaEmbeddings
     elif embedding_provider == "openai":
         embedding_class = OpenAIEmbeddings
     else:
-        raise ValueError(f"Embedding provider must be one of {EMBEDDING_PROVIDERS} but it was {embedding_provider} instead")
-    embeddings = embedding_class(
-        model=model_cfg["embedding_model"])
+        raise ValueError(
+            f"Embedding provider must be one of {EMBEDDING_PROVIDERS} but it was {embedding_provider} instead"
+        )
+    embeddings = embedding_class(model=model_cfg["embedding_model"])
 
     # 3. Vector Store Initialization
     vs_cfg = INGESTION_CONFIG["vector_store"]

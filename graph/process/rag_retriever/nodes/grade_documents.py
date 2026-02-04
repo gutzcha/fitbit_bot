@@ -2,11 +2,14 @@
 
 from typing import Any, Callable, Dict
 
-from graph.process.rag_retriever.chains.retrieval_grader import make_grader_chain
+from graph.process.rag_retriever.chains.retrieval_grader import \
+    make_grader_chain
 from graph.process.rag_retriever.rag_state import GraphState
 
 
-def make_grade_documents_node(config: Dict[str, Any]) -> Callable[[GraphState], Dict[str, Any]]:
+def make_grade_documents_node(
+    config: Dict[str, Any],
+) -> Callable[[GraphState], Dict[str, Any]]:
     """
     Factory for the GRADE_DOCUMENTS node.
     """

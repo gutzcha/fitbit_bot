@@ -6,14 +6,14 @@ Populates user profiles by combining:
 
 import json
 import sqlite3
-from typing import Any, Dict, Optional
 from pathlib import Path
+from typing import Any, Dict, Optional
 
-from graph.consts import DB_PATH, PROFILE_DIR, MOCK_USER_CONFIGS
+from graph.consts import DB_PATH, MOCK_USER_CONFIGS, PROFILE_DIR
 from graph.helpers import get_current_date
 
-
 # --- Helper Functions ---
+
 
 def safe_float(x: Any) -> Optional[float]:
     if x is None:
@@ -42,6 +42,7 @@ def fetch_one(con: sqlite3.Connection, sql: str, params=None):
 
 
 # --- Normalization Logic (CRITICAL PART) ---
+
 
 def normalize_demographics(d: Any) -> Dict[str, Any]:
     """
@@ -111,6 +112,7 @@ def normalize_coaching_preferences(p: Any) -> Dict[str, Any]:
 
 
 # --- Computation Logic ---
+
 
 def compute_activity_baselines(
     con: sqlite3.Connection, user_id: int, window_days: int
@@ -255,6 +257,7 @@ def pick_activity_level(avg_steps: Optional[float]) -> str:
 
 # --- Main Profile Builder ---
 
+
 def build_user_profile(
     con: sqlite3.Connection,
     user_id: int,
@@ -287,9 +290,7 @@ def build_user_profile(
             "baseline_window_days": baseline_window_days,
             "avg_steps_per_day": activity.get("avg_steps_per_day"),
             "avg_calories_per_day": activity.get("avg_calories_per_day"),
-            "avg_sleep_minutes_per_night": sleep.get(
-                "avg_sleep_minutes_per_night"
-            ),
+            "avg_sleep_minutes_per_night": sleep.get("avg_sleep_minutes_per_night"),
             "avg_time_in_bed_minutes_per_night": sleep.get(
                 "avg_time_in_bed_minutes_per_night"
             ),
@@ -303,9 +304,7 @@ def build_user_profile(
             ),
         },
         "activity_profile": {
-            "activity_level": pick_activity_level(
-                activity.get("avg_steps_per_day")
-            ),
+            "activity_level": pick_activity_level(activity.get("avg_steps_per_day")),
             "preferred_workout_types": static_user_data.get(
                 "preferred_workout_types", []
             ),

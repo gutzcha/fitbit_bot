@@ -29,11 +29,11 @@ class SuggestionResponse(BaseModel):
     )
     include_suggestion: bool = Field(
         default=True,
-        description="Set to False if no relevant suggestion can be made for this interaction."
+        description="Set to False if no relevant suggestion can be made for this interaction.",
     )
     reasoning: str = Field(
         default="",
-        description="Brief explanation of why this suggestion is relevant (for debugging/logging)."
+        description="Brief explanation of why this suggestion is relevant (for debugging/logging).",
     )
 
 
@@ -65,16 +65,19 @@ def build_suggestor_agent(llm_config: Dict[str, Any]) -> Runnable:
     llm = init_chat_model(**llm_config)
 
     # Create prompt template
-    prompt = ChatPromptTemplate.from_messages([
-        ("system", SUGGESTOR_SYSTEM_PROMPT),
-        MessagesPlaceholder(variable_name="history"),
-        ("human",
-            "TONE: {tone}\n\n"
-            "USER CONTEXT:\n{user_context}\n\n"
-            "INTERACTION:\n{interaction}\n\n"
-            "Generate a coaching suggestion based on the above context."
-        ),
-    ])
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", SUGGESTOR_SYSTEM_PROMPT),
+            MessagesPlaceholder(variable_name="history"),
+            (
+                "human",
+                "TONE: {tone}\n\n"
+                "USER CONTEXT:\n{user_context}\n\n"
+                "INTERACTION:\n{interaction}\n\n"
+                "Generate a coaching suggestion based on the above context.",
+            ),
+        ]
+    )
 
     # Bind structured output to the model
     # This works with models that support function calling
@@ -90,6 +93,7 @@ def build_suggestor_agent(llm_config: Dict[str, Any]) -> Runnable:
         # Fallback for models without structured output support
         # We'll parse JSON from text in the node
         from langchain_core.output_parsers import StrOutputParser
+
         chain = prompt | llm | StrOutputParser()
 
     return chain

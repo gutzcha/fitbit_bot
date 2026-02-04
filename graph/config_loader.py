@@ -11,6 +11,7 @@ from graph.consts import BASE_DIR
 
 DEFAULT_CONFIG_PATH = BASE_DIR / "app" / "config.json"
 
+
 def load_graph_config(config_path: Path | str = DEFAULT_CONFIG_PATH) -> Dict[str, Any]:
     """
     Loads the full configuration dictionary from JSON.

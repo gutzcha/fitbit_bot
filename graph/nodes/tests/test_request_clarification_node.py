@@ -1,13 +1,9 @@
 from langchain_core.messages import HumanMessage
 
 from graph.nodes.request_clarification import make_clarification_node
-from tests.live_utils import (
-    get_runtime_node,
-    load_runtime_config,
-    sample_conversation_state,
-    sample_intent_metadata,
-    sample_user_profile,
-)
+from tests.live_utils import (get_runtime_node, load_runtime_config,
+                              sample_conversation_state,
+                              sample_intent_metadata, sample_user_profile)
 
 
 def test_request_clarification_node_live():

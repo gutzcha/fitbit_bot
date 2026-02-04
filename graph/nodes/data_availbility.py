@@ -8,26 +8,28 @@ Wraps the data_availability chain but prioritizes specific questions from the Pl
 from typing import Any, Callable, Dict
 
 from langchain.chat_models import init_chat_model
+from langchain_core.messages import (AIMessage, HumanMessage, SystemMessage,
+                                     trim_messages)
+from pydantic import BaseModel, Field
 
 from graph.chains.data_availability import build_data_availability_chain
-
-from graph.state import AssistantState
-from langchain_core.messages import AIMessage, SystemMessage, HumanMessage, trim_messages
+from graph.config_schemas import LLMConfig
 from graph.helpers import serialize_context_to_json
 from graph.memory import trim_conversation_history
 from graph.prompts.data_availability import DATA_AVAILABILITY_SYSTEM_STRING
-
-from pydantic import BaseModel, Field
-from graph.config_schemas import LLMConfig
+from graph.state import AssistantState
 
 
 class DataAvailabilityConfig(BaseModel):
     """Configuration for the data_availability Node."""
+
     llm: LLMConfig
     max_history_limit: int = Field(default=5, gt=0)
 
 
-def make_data_availability_node(config_dict: Dict[str, Any]) -> Callable[[AssistantState], Dict[str, Any]]:
+def make_data_availability_node(
+    config_dict: Dict[str, Any],
+) -> Callable[[AssistantState], Dict[str, Any]]:
     """
     Factory that creates the data_availability node executable using the provided configuration.
 
@@ -65,11 +67,15 @@ def make_data_availability_node(config_dict: Dict[str, Any]) -> Callable[[Assist
             messages, max_messages=config.max_history_limit
         )
         context = [SystemMessage(content=DATA_AVAILABILITY_SYSTEM_STRING)]
-        if plan_msg := serialize_context_to_json(plan,"PlanStep"):
+        if plan_msg := serialize_context_to_json(plan, "PlanStep"):
             context += [AIMessage(content=plan_msg)]
-        if conversation_state_msg := serialize_context_to_json(conversation_state, "ConversationState"):
+        if conversation_state_msg := serialize_context_to_json(
+            conversation_state, "ConversationState"
+        ):
             context += [AIMessage(content=conversation_state_msg)]
-        if intent_metadata_msg := serialize_context_to_json(intent_metadata, "IntentMetadata"):
+        if intent_metadata_msg := serialize_context_to_json(
+            intent_metadata, "IntentMetadata"
+        ):
             context += [AIMessage(content=intent_metadata_msg)]
         if user_profile_msg := serialize_context_to_json(user_profile, "UserProfile"):
             context += [SystemMessage(content=user_profile_msg)]
@@ -77,7 +83,6 @@ def make_data_availability_node(config_dict: Dict[str, Any]) -> Callable[[Assist
 
         if not trimmed_messages:
             return {"response": "Can you please clarify?"}
-
 
         # Invoke the generic chain
         response = data_availability_chain.invoke(context)

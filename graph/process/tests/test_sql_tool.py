@@ -1,5 +1,6 @@
 from graph.process.tools.sql_metrics import make_sql_tool
-from tests.live_utils import SAMPLE_QUESTION, get_runtime_node, load_runtime_config
+from tests.live_utils import (SAMPLE_QUESTION, get_runtime_node,
+                              load_runtime_config)
 
 
 def _normalize_tool_output(result):

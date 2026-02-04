@@ -5,11 +5,8 @@ System prompt and finalized ChatPromptTemplate for the Clarification Node.
 Dynamically injects available metrics/profile fields from config.
 """
 
-from graph.data_config import (
-    PROFILE_AVAILABLE_FIELDS,
-    SQL_AVAILABLE_METRICS,
-    VECTOR_KNOWLEDGE_TOPICS,
-)
+from graph.data_config import (PROFILE_AVAILABLE_FIELDS, SQL_AVAILABLE_METRICS,
+                               VECTOR_KNOWLEDGE_TOPICS)
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 1. DATA FORMATTERS

@@ -2,12 +2,8 @@ from langchain_core.messages import HumanMessage
 
 from graph.chains.intent import build_intent_chain
 from graph.schemas import IntentMetadata
-from tests.live_utils import (
-    SAMPLE_QUESTION,
-    build_llm,
-    get_runtime_node,
-    load_runtime_config,
-)
+from tests.live_utils import (SAMPLE_QUESTION, build_llm, get_runtime_node,
+                              load_runtime_config)
 
 
 def _build_intent_chain_from_config(config: dict, slow_threshold: float | None = None):

@@ -1,9 +1,13 @@
-from pydantic import BaseModel, Field
 from typing import Optional
+
+from pydantic import BaseModel, Field
+
 from graph.config_schemas import LLMConfig
+
 
 class IntentNodeConfig(BaseModel):
     """Specific configuration for the Intent Node."""
+
     llm_fast: LLMConfig
     llm_slow: Optional[LLMConfig] = None
 

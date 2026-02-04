@@ -6,7 +6,9 @@ from graph.process.rag_retriever.chains.generation import make_generation_chain
 from graph.process.rag_retriever.rag_state import GraphState
 
 
-def make_generate_node(config: Dict[str, Any]) -> Callable[[GraphState], Dict[str, Any]]:
+def make_generate_node(
+    config: Dict[str, Any],
+) -> Callable[[GraphState], Dict[str, Any]]:
     """
     Factory for the GENERATE node.
     """
@@ -25,7 +27,9 @@ def make_generate_node(config: Dict[str, Any]) -> Callable[[GraphState], Dict[st
         context_str = "\n\n".join([doc.page_content for doc in documents])
 
         # 3. Invoke Chain
-        generation = generation_chain.invoke({"context": context_str, "question": question})
+        generation = generation_chain.invoke(
+            {"context": context_str, "question": question}
+        )
 
         return {"documents": documents, "question": question, "generation": generation}
 

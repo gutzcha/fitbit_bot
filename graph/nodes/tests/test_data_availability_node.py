@@ -1,13 +1,9 @@
 from langchain_core.messages import HumanMessage
 
 from graph.nodes.data_availbility import make_data_availability_node
-from tests.live_utils import (
-    get_runtime_node,
-    load_runtime_config,
-    sample_conversation_state,
-    sample_intent_metadata,
-    sample_user_profile,
-)
+from tests.live_utils import (get_runtime_node, load_runtime_config,
+                              sample_conversation_state,
+                              sample_intent_metadata, sample_user_profile)
 
 
 def test_data_availability_node_live():

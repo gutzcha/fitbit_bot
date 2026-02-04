@@ -18,8 +18,6 @@ from graph.helpers import get_current_date
 from graph.memory import MemoryManager
 from graph.process.process import make_process_node
 
-
-
 DEFAULT_USER_ID = 1503960366
 
 

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Literal, Optional, Dict, Any
+from typing import Any, Dict, Literal, Optional
 
 from langchain_anthropic import ChatAnthropic
 from langchain_core.language_models.chat_models import BaseChatModel
@@ -11,8 +11,6 @@ Provider = Literal["ollama", "anthropic"]
 
 import json
 import os
-
-
 
 
 def get_current_date():
@@ -32,16 +30,18 @@ import os
 from pathlib import Path
 from typing import Literal, Optional
 
-# Import necessary embedding classes
-from langchain_ollama import OllamaEmbeddings
-from langchain_openai import OpenAIEmbeddings
-# from langchain_huggingface import HuggingFaceEmbeddings # Optional
-
 from langchain_chroma import Chroma
 from langchain_core.embeddings import Embeddings
 from langchain_core.vectorstores import VectorStoreRetriever
+# Import necessary embedding classes
+from langchain_ollama import OllamaEmbeddings
+from langchain_openai import OpenAIEmbeddings
 
 from graph.consts import EMBED_MODEL, KB_PATH
+
+# from langchain_huggingface import HuggingFaceEmbeddings # Optional
+
+
 
 # Define supported providers
 EmbeddingProvider = Literal["ollama", "openai"]
@@ -68,10 +68,10 @@ def get_embedding_model(provider: str, model: str) -> Embeddings:
 
 
 def get_retriever(
-        persist_dir: str | Path,
-        collection_name: str,
-        embedding_model: Embeddings,
-        k: int = 4
+    persist_dir: str | Path,
+    collection_name: str,
+    embedding_model: Embeddings,
+    k: int = 4,
 ) -> VectorStoreRetriever:
     """
     Initializes the VectorStore and returns a retriever.
@@ -91,8 +91,9 @@ def get_retriever(
     return vector_store.as_retriever(search_kwargs={"k": k})
 
 
-from langchain_core.messages import BaseMessage, SystemMessage
 import re
+
+from langchain_core.messages import BaseMessage, SystemMessage
 
 
 def serialize_context_to_json(obj: Any, label: str) -> str:
@@ -140,7 +141,7 @@ def extract_json_from_markdown(text: str) -> dict:
         ValueError: If no valid JSON found
     """
     # Try to find JSON in markdown code blocks
-    json_pattern = r'```(?:json)?\s*(\{.*?\})\s*```'
+    json_pattern = r"```(?:json)?\s*(\{.*?\})\s*```"
     matches = re.findall(json_pattern, text, re.DOTALL)
 
     if matches:
@@ -152,7 +153,7 @@ def extract_json_from_markdown(text: str) -> dict:
     # Try to find raw JSON (no markdown)
     try:
         # Look for JSON object pattern
-        json_obj_pattern = r'\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}'
+        json_obj_pattern = r"\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}"
         matches = re.findall(json_obj_pattern, text, re.DOTALL)
         if matches:
             # Try each match (in case of multiple JSON objects)
@@ -171,13 +172,11 @@ def extract_json_from_markdown(text: str) -> dict:
         raise ValueError(f"Could not extract valid JSON from text: {text[:200]}...")
 
 
-
-
 def build_context_messages(
-        trimmed_messages: list[BaseMessage],
-        conversation_state: Any,
-        intent_metadata: Any,
-        user_profile: Any,
+    trimmed_messages: list[BaseMessage],
+    conversation_state: Any,
+    intent_metadata: Any,
+    user_profile: Any,
 ) -> list[BaseMessage]:
     """
     Build the complete message list with context injected as system messages.
@@ -211,9 +210,10 @@ def build_context_messages(
 
     # Add conversation state context
     if conversation_state is not None:
-        conv_context = serialize_context_to_json(conversation_state, "Conversation State")
+        conv_context = serialize_context_to_json(
+            conversation_state, "Conversation State"
+        )
         context_messages.append(SystemMessage(content=conv_context))
 
     # Combine: context messages first, then conversation history
     return context_messages + list(trimmed_messages)
-

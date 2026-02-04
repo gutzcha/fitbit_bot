@@ -1,14 +1,10 @@
-from langchain_core.messages import HumanMessage, AIMessage
+from langchain_core.messages import AIMessage, HumanMessage
 
 from graph.helpers import extract_json_from_markdown
 from graph.process.agents.execution import build_execution_agent
 from graph.process.schemas import ExecutionResponse
-from tests.live_utils import (
-    SAMPLE_QUESTION,
-    build_llm,
-    get_runtime_node,
-    load_runtime_config,
-)
+from tests.live_utils import (SAMPLE_QUESTION, build_llm, get_runtime_node,
+                              load_runtime_config)
 
 
 def _extract_execution_response(raw_result) -> ExecutionResponse:

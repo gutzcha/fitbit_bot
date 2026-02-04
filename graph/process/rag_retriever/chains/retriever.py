@@ -9,7 +9,7 @@ from langchain_chroma import Chroma
 from langchain_ollama import OllamaEmbeddings
 from langchain_openai import OpenAIEmbeddings
 
-from graph.consts import KB_PATH, KB_NAME
+from graph.consts import KB_NAME, KB_PATH
 
 
 def make_retriever(config: Dict[str, Any]):
@@ -38,10 +38,7 @@ def make_retriever(config: Dict[str, Any]):
     else:
         # Default to Ollama
         base_url = embed_cfg.get("base_url", "http://localhost:11434")
-        embeddings = OllamaEmbeddings(
-            model=model_name,
-            base_url=base_url
-        )
+        embeddings = OllamaEmbeddings(model=model_name, base_url=base_url)
 
     # ---------------------------------------------------------
     # 2. Initialize Vector Store
@@ -65,15 +62,11 @@ def make_retriever(config: Dict[str, Any]):
     # Determine search type based on threshold availability
     if score_threshold > 0:
         search_type = "similarity_score_threshold"
-        search_kwargs = {
-            "k": k,
-            "score_threshold": score_threshold
-        }
+        search_kwargs = {"k": k, "score_threshold": score_threshold}
     else:
         search_type = "similarity"
         search_kwargs = {"k": k}
 
     return vectorstore.as_retriever(
-        search_type=search_type,
-        search_kwargs=search_kwargs
+        search_type=search_type, search_kwargs=search_kwargs
     )

@@ -23,6 +23,12 @@ INTENT -> CLARIFICATION | STATIC_RESPOND | DATA_AVAILABILITY | PROCESS
 PROCESS -> CLARIFICATION | SUGGESTOR | END
 ```
 
+Diagrams:
+
+![Main graph](graph/diagrams/main_graph.png)
+
+![RAG subgraph](graph/diagrams/rag_graph.png)
+
 Key components:
 - LangGraph for orchestration
 - LangChain for LLM integration and tool calling

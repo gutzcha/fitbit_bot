@@ -1,13 +1,9 @@
 from langchain_core.messages import HumanMessage
 
 from graph.nodes.intent import make_intent_node
-from tests.live_utils import (
-    SAMPLE_QUESTION,
-    get_runtime_node,
-    load_runtime_config,
-    sample_conversation_state,
-    sample_user_profile,
-)
+from tests.live_utils import (SAMPLE_QUESTION, get_runtime_node,
+                              load_runtime_config, sample_conversation_state,
+                              sample_user_profile)
 
 
 def test_intent_node_live_updates_state():

@@ -1,13 +1,9 @@
 from langchain_core.messages import AIMessage, HumanMessage
 
 from graph.nodes.suggestor import make_suggestor_node
-from tests.live_utils import (
-    SAMPLE_AI_ANSWER,
-    SAMPLE_QUESTION,
-    get_runtime_node,
-    load_runtime_config,
-    sample_user_profile,
-)
+from tests.live_utils import (SAMPLE_AI_ANSWER, SAMPLE_QUESTION,
+                              get_runtime_node, load_runtime_config,
+                              sample_user_profile)
 
 
 def test_suggestor_node_live_appends_suggestion():

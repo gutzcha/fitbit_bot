@@ -13,14 +13,13 @@ from typing import Any, Callable, Dict
 from graph.data_config import SQL_AVAILABLE_METRICS, VECTOR_KNOWLEDGE_TOPICS
 from graph.defaults.static_response import StaticResponseNodeConfig
 from graph.state import AssistantState
-from graph.static_responses import (
-    ERROR_RESPONSE,
-    GREETING_RESPONSE,
-    OUT_OF_SCOPE_RESPONSE,
-)
+from graph.static_responses import (ERROR_RESPONSE, GREETING_RESPONSE,
+                                    OUT_OF_SCOPE_RESPONSE)
 
 
-def make_static_response_node(config_dict: Dict[str, Any]) -> Callable[[AssistantState], Dict[str, Any]]:
+def make_static_response_node(
+    config_dict: Dict[str, Any],
+) -> Callable[[AssistantState], Dict[str, Any]]:
     """
     Factory for the static response node.
 

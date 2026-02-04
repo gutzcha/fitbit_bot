@@ -16,10 +16,8 @@ from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.messages import BaseMessage, trim_messages
 from langchain_core.prompts import ChatPromptTemplate
 
-from graph.schemas import UserProfile
-
 from graph.consts import PROFILE_DIR
-
+from graph.schemas import UserProfile
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 1. SHORT-TERM MEMORY (Context Window)

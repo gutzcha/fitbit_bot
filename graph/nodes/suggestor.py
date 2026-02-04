@@ -23,10 +23,10 @@ from graph.agents.suggestor import SuggestionResponse, build_suggestor_agent
 from graph.memory import trim_conversation_history
 from graph.state import AssistantState
 
-
 # ============================================================================
 # HELPER FUNCTIONS
 # ============================================================================
+
 
 def retrieve_memories(user_id: int, query: str) -> str:
     """
@@ -50,7 +50,7 @@ def _extract_json_from_text(text: str) -> dict:
     This is a fallback for models that don't support proper structured output.
     """
     # Try to find JSON in markdown code blocks
-    json_pattern = r'```(?:json)?\s*(\{.*?\})\s*```'
+    json_pattern = r"```(?:json)?\s*(\{.*?\})\s*```"
     matches = re.findall(json_pattern, text, re.DOTALL)
 
     if matches:
@@ -61,7 +61,7 @@ def _extract_json_from_text(text: str) -> dict:
 
     # Try to find raw JSON
     try:
-        json_obj_pattern = r'\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}'
+        json_obj_pattern = r"\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}"
         matches = re.findall(json_obj_pattern, text, re.DOTALL)
         if matches:
             for match in matches:
@@ -116,7 +116,11 @@ def _serialize_user_context(user_profile: Any) -> str:
     if hasattr(user_profile, "health_goals"):
         goals = user_profile.health_goals
         if goals:
-            goals_dict = goals.model_dump() if hasattr(goals, "model_dump") else goals.dict() if hasattr(goals, "dict") else goals
+            goals_dict = (
+                goals.model_dump()
+                if hasattr(goals, "model_dump")
+                else goals.dict() if hasattr(goals, "dict") else goals
+            )
             context_parts.append(f"Goals: {json.dumps(goals_dict, default=str)}")
     elif isinstance(user_profile, dict):
         goals = user_profile.get("health_goals")
@@ -127,19 +131,33 @@ def _serialize_user_context(user_profile: Any) -> str:
     if hasattr(user_profile, "activity_profile"):
         activity = user_profile.activity_profile
         if activity:
-            activity_dict = activity.model_dump() if hasattr(activity, "model_dump") else activity.dict() if hasattr(activity, "dict") else activity
-            context_parts.append(f"Activity Profile: {json.dumps(activity_dict, default=str)}")
+            activity_dict = (
+                activity.model_dump()
+                if hasattr(activity, "model_dump")
+                else activity.dict() if hasattr(activity, "dict") else activity
+            )
+            context_parts.append(
+                f"Activity Profile: {json.dumps(activity_dict, default=str)}"
+            )
     elif isinstance(user_profile, dict):
         activity = user_profile.get("activity_profile")
         if activity:
-            context_parts.append(f"Activity Profile: {json.dumps(activity, default=str)}")
+            context_parts.append(
+                f"Activity Profile: {json.dumps(activity, default=str)}"
+            )
 
     # Extract baselines
     if hasattr(user_profile, "baselines"):
         baselines = user_profile.baselines
         if baselines:
-            baselines_dict = baselines.model_dump() if hasattr(baselines, "model_dump") else baselines.dict() if hasattr(baselines, "dict") else baselines
-            context_parts.append(f"Baselines: {json.dumps(baselines_dict, default=str)}")
+            baselines_dict = (
+                baselines.model_dump()
+                if hasattr(baselines, "model_dump")
+                else baselines.dict() if hasattr(baselines, "dict") else baselines
+            )
+            context_parts.append(
+                f"Baselines: {json.dumps(baselines_dict, default=str)}"
+            )
     elif isinstance(user_profile, dict):
         baselines = user_profile.get("baselines")
         if baselines:
@@ -187,7 +205,10 @@ def _extract_user_id(user_profile: Any) -> int:
 # NODE FACTORY
 # ============================================================================
 
-def make_suggestor_node(config_dict: Dict[str, Any]) -> Callable[[AssistantState], Dict[str, Any]]:
+
+def make_suggestor_node(
+    config_dict: Dict[str, Any],
+) -> Callable[[AssistantState], Dict[str, Any]]:
     """
     Create a suggestor node that adds coaching nudges to responses.
 
@@ -216,8 +237,10 @@ def make_suggestor_node(config_dict: Dict[str, Any]) -> Callable[[AssistantState
     # Check if suggestor is enabled
     enabled = bool(config_dict.get("enabled", True))
     if not enabled:
+
         def _noop(_: AssistantState) -> Dict[str, Any]:
             return {}
+
         return _noop
 
     # Extract config
@@ -253,7 +276,9 @@ def make_suggestor_node(config_dict: Dict[str, Any]) -> Callable[[AssistantState
 
         # Check that last message is from assistant
         last_ai_message = messages[-1]
-        trimmed_messages = trim_conversation_history(messages, config_dict.get("max_history_limit", 5))
+        trimmed_messages = trim_conversation_history(
+            messages, config_dict.get("max_history_limit", 5)
+        )
         if not isinstance(last_ai_message, AIMessage):
             return {}
 
@@ -274,18 +299,19 @@ def make_suggestor_node(config_dict: Dict[str, Any]) -> Callable[[AssistantState
 
         # Build interaction context
         interaction = (
-            f"User asked: {user_query}\n"
-            f"Relevant memories: {relevant_memories}"
+            f"User asked: {user_query}\n" f"Relevant memories: {relevant_memories}"
         )
 
         # Invoke suggestor chain
         try:
-            result = chain.invoke({
-                "tone": tone,
-                "user_context": user_context,
-                "interaction": interaction,
-                "history": trimmed_messages
-            })
+            result = chain.invoke(
+                {
+                    "tone": tone,
+                    "user_context": user_context,
+                    "interaction": interaction,
+                    "history": trimmed_messages,
+                }
+            )
 
             # Handle different result types
             suggestion_response = None
@@ -316,7 +342,7 @@ def make_suggestor_node(config_dict: Dict[str, Any]) -> Callable[[AssistantState
                     suggestion_response = SuggestionResponse(
                         suggestion=result.strip(),
                         include_suggestion=True,
-                        reasoning="Fallback to raw text"
+                        reasoning="Fallback to raw text",
                     )
 
             if not suggestion_response or not suggestion_response.include_suggestion:
@@ -335,7 +361,9 @@ def make_suggestor_node(config_dict: Dict[str, Any]) -> Callable[[AssistantState
         updated_last = AIMessage(content=new_content)
 
         # Update messages
-        trimmed_messages = trim_conversation_history(messages, max_messages=max_history_limit)
+        trimmed_messages = trim_conversation_history(
+            messages, max_messages=max_history_limit
+        )
         trimmed_messages = list(trimmed_messages)
 
         if trimmed_messages and isinstance(trimmed_messages[-1], AIMessage):

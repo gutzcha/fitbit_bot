@@ -18,10 +18,10 @@ from graph.process.tools import make_rag_tool, make_sql_tool
 
 
 def build_execution_agent(
-        manager_llm: BaseChatModel,
-        sql_config: Dict[str, Any],
-        sql_validation_config: Dict[str, Any],
-        rag_config: Dict[str, Any],
+    manager_llm: BaseChatModel,
+    sql_config: Dict[str, Any],
+    sql_validation_config: Dict[str, Any],
+    rag_config: Dict[str, Any],
 ) -> Runnable:
     """
     Build an execution agent using LangChain v1.0+ create_agent.

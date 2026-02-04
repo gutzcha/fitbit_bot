@@ -17,7 +17,9 @@ from graph.schemas import IntentMetadata
 from graph.state import AssistantState, ConversationState
 
 
-def make_intent_node(config_dict: Dict[str, Any]) -> Callable[[AssistantState], Dict[str, Any]]:
+def make_intent_node(
+    config_dict: Dict[str, Any],
+) -> Callable[[AssistantState], Dict[str, Any]]:
     """
     Factory that builds the intent node.
 

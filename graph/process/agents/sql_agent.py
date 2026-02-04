@@ -7,17 +7,17 @@ Factory for building the SQL Data Agent using SQLDatabaseToolkit.
 from typing import Any, Dict
 
 from langchain.agents import create_agent
+from langchain.chat_models import init_chat_model
 from langchain_community.agent_toolkits import SQLDatabaseToolkit
 from langchain_community.utilities import SQLDatabase
-from langchain.chat_models import init_chat_model
 
 from dataset.dataset_config import SQL_SCHEMA
-from graph.process.schemas import SQLAgentResponse
 from graph.consts import DB_URI
 from graph.helpers import get_current_date
+from graph.process.schemas import SQLAgentResponse
+
 # Singleton DB connection
 _DB_INSTANCE = None
-
 
 
 def get_db(db_uri: str):
@@ -43,7 +43,6 @@ def build_sql_agent(agent_config: Dict[str, Any], validation_config: Dict[str, A
     # 1. Setup Resources
     llm_config = agent_config.get("llm", {})
     llm = init_chat_model(**llm_config)
-
 
     db_uri = agent_config.get("db_uri", DB_URI)
     db = get_db(db_uri)

@@ -9,6 +9,7 @@ from pydantic import BaseModel, Field
 
 class GradeDocuments(BaseModel):
     """Binary score for relevance check on retrieved documents."""
+
     # User requested 'true' or 'false' (string) instead of 'yes'/'no'
     binary_score: str = Field(
         description="Documents are relevant to the question, 'true' or 'false'"
@@ -41,7 +42,10 @@ def make_grader_chain(config: Dict[str, Any]):
     grade_prompt = ChatPromptTemplate.from_messages(
         [
             ("system", system_prompt),
-            ("human", "Retrieved document: \n\n {document} \n\n User question: {question}"),
+            (
+                "human",
+                "Retrieved document: \n\n {document} \n\n User question: {question}",
+            ),
         ]
     )
 

@@ -1,7 +1,8 @@
-from dataset.fitbit_data_ingestion_sqlite3 import FitbitDataPipeline
-from populate_user_profile import generate_all_user_profiles
 from health_kb_loader import generate_health_knowledge_base
 from inspect_db import inspect_database
+from populate_user_profile import generate_all_user_profiles
+
+from dataset.fitbit_data_ingestion_sqlite3 import FitbitDataPipeline
 
 # Generate SQL dataset
 pipeline = FitbitDataPipeline()

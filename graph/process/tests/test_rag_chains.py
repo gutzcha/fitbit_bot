@@ -1,7 +1,8 @@
 from langchain_core.documents import Document
 
 from graph.process.rag_retriever.chains.generation import make_generation_chain
-from graph.process.rag_retriever.chains.retrieval_grader import make_grader_chain
+from graph.process.rag_retriever.chains.retrieval_grader import \
+    make_grader_chain
 from graph.process.rag_retriever.chains.retriever import make_retriever
 from tests.live_utils import get_runtime_node, load_runtime_config
 
@@ -24,11 +25,19 @@ def test_rag_grader_chain_live():
     grader = make_grader_chain(rag_cfg.get("grade_documents", {}))
     question = "What is a normal resting heart rate?"
 
-    relevant = Document(page_content="Normal resting heart rate is often 60 to 100 bpm for adults.")
-    irrelevant = Document(page_content="This document is about banana bread recipes and baking tips.")
+    relevant = Document(
+        page_content="Normal resting heart rate is often 60 to 100 bpm for adults."
+    )
+    irrelevant = Document(
+        page_content="This document is about banana bread recipes and baking tips."
+    )
 
-    score_relevant = grader.invoke({"question": question, "document": relevant.page_content})
-    score_irrelevant = grader.invoke({"question": question, "document": irrelevant.page_content})
+    score_relevant = grader.invoke(
+        {"question": question, "document": relevant.page_content}
+    )
+    score_irrelevant = grader.invoke(
+        {"question": question, "document": irrelevant.page_content}
+    )
 
     assert score_relevant.binary_score.lower() == "true"
     assert score_irrelevant.binary_score.lower() == "false"

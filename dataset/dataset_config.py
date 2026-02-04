@@ -3,13 +3,18 @@ dataset.dataset_config.py
 # This dictionary defines how to process every table.
 # To add a new table, you only need to edit this dictionary.
 """
-from typing import Dict, Optional, TypedDict, Literal
-from graph.consts import (EMBED_MODEL, KB_PATH, KB_RAW_DATA_PATH, KB_NAME, EMBED_PROVIDER)
+
+from typing import Dict, Literal, Optional, TypedDict
+
+from graph.consts import (EMBED_MODEL, EMBED_PROVIDER, KB_NAME, KB_PATH,
+                          KB_RAW_DATA_PATH)
+
 
 class TableConfig(TypedDict):
     csv_name: str
     rename_map: Dict[str, str]
     date_cols: Dict[str, Optional[str]]
+
 
 SCHEMA_MAPPING: Dict[str, TableConfig] = {
     "daily_activity": {
@@ -36,15 +41,11 @@ SCHEMA_MAPPING: Dict[str, TableConfig] = {
             "TotalMinutesAsleep": "minutes_asleep",
             "TotalTimeInBed": "time_in_bed",
         },
-        "date_cols": {"event_date": None}, # Auto-detect format
+        "date_cols": {"event_date": None},  # Auto-detect format
     },
     "heartrate": {
         "csv_name": "heartrate_seconds_merged.csv",
-        "rename_map": {
-            "Id": "user_id",
-            "Time": "event_time",
-            "Value": "bpm"
-        },
+        "rename_map": {"Id": "user_id", "Time": "event_time", "Value": "bpm"},
         "date_cols": {"event_time": None},
     },
     "hourly_steps": {
@@ -115,8 +116,6 @@ STRATEGY_MAP = {
     "Workout_Plans_and_Goals.txt": {"size": 1200, "overlap": 200, "cat": "Fitness"},
 }
 
-
-from typing import Dict, List
 
 # ─────────────────────────────────────────────────────────────────────────────
 # SQL AVAILABLE METRICS

@@ -30,15 +30,10 @@ from typing import Optional
 import kagglehub
 import pandas as pd
 
-# --- Imports from your refactored modules ---
-from graph.consts import (
-    DATASET_DIR,
-    DB_PATH,
-    KAGGLE_DATASET_ID,
-    PROCESSED_DIR,
-    RAW_DATA_SUBDIRS,
-)
 from dataset.dataset_config import SCHEMA_MAPPING, TableConfig
+# --- Imports from your refactored modules ---
+from graph.consts import (DATASET_DIR, DB_PATH, KAGGLE_DATASET_ID,
+                          PROCESSED_DIR, RAW_DATA_SUBDIRS)
 
 # Configure logging
 logging.basicConfig(
@@ -107,10 +102,7 @@ class FitbitDataPipeline:
         raise FileNotFoundError(f"Could not find raw CSV files in {self.dataset_dir}")
 
     def _process_single_table(
-            self,
-            con: sqlite3.Connection,
-            table_name: str,
-            config: TableConfig
+        self, con: sqlite3.Connection, table_name: str, config: TableConfig
     ):
         """
         Generic processor that reads config dicts and loads data to SQLite.

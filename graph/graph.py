@@ -25,12 +25,8 @@ from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, StateGraph
 
 from graph.config_loader import load_graph_config
-from graph.nodes import (
-    make_clarification_node,
-    make_intent_node,
-    make_static_response_node,
-    make_data_availability_node
-)
+from graph.nodes import (make_clarification_node, make_data_availability_node,
+                         make_intent_node, make_static_response_node)
 from graph.nodes.suggestor import make_suggestor_node
 from graph.process.process import make_process_node
 from graph.state import AssistantState
@@ -43,9 +39,15 @@ def build_graph(config: Optional[dict] = None):
     runtime_dict: Dict = config_dict.get("runtime_nodes", {})
 
     intent_node = make_intent_node(runtime_dict.get("graph.nodes.intent", {}))
-    clarification_node = make_clarification_node(runtime_dict.get("graph.nodes.request_clarification", {}))
-    data_availability_node = make_data_availability_node(runtime_dict.get("graph.nodes.data_availability", {}))
-    static_response_node = make_static_response_node(runtime_dict.get("graph.nodes.static_response", {}))
+    clarification_node = make_clarification_node(
+        runtime_dict.get("graph.nodes.request_clarification", {})
+    )
+    data_availability_node = make_data_availability_node(
+        runtime_dict.get("graph.nodes.data_availability", {})
+    )
+    static_response_node = make_static_response_node(
+        runtime_dict.get("graph.nodes.static_response", {})
+    )
 
     process_node = make_process_node(config_dict)
 
@@ -53,7 +55,9 @@ def build_graph(config: Optional[dict] = None):
     suggestor_node = make_suggestor_node(suggestor_cfg)
     suggestor_enabled = bool(suggestor_cfg.get("enabled", True))
 
-    def intent_router(state: AssistantState) -> Literal["clarification", "process", "static_respond", "data_availability"]:
+    def intent_router(
+        state: AssistantState,
+    ) -> Literal["clarification", "process", "static_respond", "data_availability"]:
         metadata = state.get("intent_metadata")
         if not metadata:
             return "clarification"
@@ -78,7 +82,9 @@ def build_graph(config: Optional[dict] = None):
 
         return "process"
 
-    def after_process_router(state: AssistantState) -> Literal["clarification", "suggest", "end"]:
+    def after_process_router(
+        state: AssistantState,
+    ) -> Literal["clarification", "suggest", "end"]:
         if state.get("needs_clarification"):
             return "clarification"
         if suggestor_enabled:

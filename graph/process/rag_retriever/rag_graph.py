@@ -11,18 +11,12 @@ from typing import Any, Dict
 from dotenv import load_dotenv
 from langgraph.graph import END, StateGraph
 
-from graph.process.rag_retriever.const import (
-    GENERATE,
-    GRADE_DOCUMENTS,
-    NO_DATA_AVAILABLE,
-    RETRIEVE,
-)
-from graph.process.rag_retriever.nodes import (
-    make_generate_node,
-    make_grade_documents_node,
-    make_no_available_data_node,
-    make_retrieve_node,
-)
+from graph.process.rag_retriever.const import (GENERATE, GRADE_DOCUMENTS,
+                                               NO_DATA_AVAILABLE, RETRIEVE)
+from graph.process.rag_retriever.nodes import (make_generate_node,
+                                               make_grade_documents_node,
+                                               make_no_available_data_node,
+                                               make_retrieve_node)
 from graph.process.rag_retriever.rag_state import GraphState
 
 load_dotenv()

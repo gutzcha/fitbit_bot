@@ -1,9 +1,7 @@
-from graph.process.rag_retriever.nodes import (
-    make_generate_node,
-    make_grade_documents_node,
-    make_no_available_data_node,
-    make_retrieve_node,
-)
+from graph.process.rag_retriever.nodes import (make_generate_node,
+                                               make_grade_documents_node,
+                                               make_no_available_data_node,
+                                               make_retrieve_node)
 from tests.live_utils import get_runtime_node, load_runtime_config
 
 
@@ -54,7 +52,9 @@ def test_rag_generate_node_live():
 def test_rag_no_available_data_node():
     node = make_no_available_data_node()
 
-    result = node({"question": "", "documents": [], "generation": "", "no_data_available": True})
+    result = node(
+        {"question": "", "documents": [], "generation": "", "no_data_available": True}
+    )
 
     assert result["no_data_available"] is True
     assert "could not find" in result["generation"].lower()
