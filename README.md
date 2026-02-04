@@ -24,6 +24,7 @@ PROCESS -> CLARIFICATION | SUGGESTOR | END
 ```
 
 Diagrams:
+![Streamlis](graph/diagrams/streamlis_screenshot.png)
 
 ![Main graph](graph/diagrams/main_graph.png)
 
