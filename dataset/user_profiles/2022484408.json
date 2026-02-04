@@ -1,0 +1,46 @@
+{
+  "user_id": 2022484408,
+  "user_name": "Karl Kal",
+  "demographics": {
+    "age_years": 55,
+    "sex": "male",
+    "height_cm": 170.0
+  },
+  "body_metrics": {
+    "weight_kg": null,
+    "weight_lbs": null,
+    "bmi": null,
+    "body_fat_pct": null,
+    "weight_last_updated_iso": null
+  },
+  "baselines": {
+    "baseline_window_days": 30,
+    "avg_steps_per_day": 12174.916666666666,
+    "avg_calories_per_day": 2475.3333333333335,
+    "avg_sleep_minutes_per_night": null,
+    "avg_time_in_bed_minutes_per_night": null,
+    "avg_resting_hr_bpm": 52.416666666666664,
+    "avg_hr_bpm": 81.74580852010162,
+    "avg_very_active_minutes_per_day": 40.083333333333336,
+    "avg_sedentary_minutes_per_day": 1058.9166666666667
+  },
+  "activity_profile": {
+    "activity_level": "high",
+    "preferred_workout_types": [
+      "walking"
+    ],
+    "timezone": "Asia/Jerusalem"
+  },
+  "health_goals": {
+    "daily_steps_goal": 12000,
+    "weight_goal_kg": 80.0
+  },
+  "coaching_preferences": {
+    "suggestiveness": 0.8,
+    "tone": "energetic"
+  },
+  "system_state": {
+    "onboarding_completed": true,
+    "last_interaction_iso": "2016-04-11"
+  }
+}

@@ -1,0 +1,126 @@
+{
+  "project_metadata": {
+    "version": "2.0.0",
+    "description": "Flat-Path Configuration"
+  },
+  "runtime_nodes": {
+    "graph.nodes.intent": {
+      "description": "Hybrid routing. Fast LLM first -> Slow LLM fallback.",
+      "confidence_threshold": 0.7,
+      "llm_fast": {
+        "model": "ollama:qwen3:8b",
+        "temperature": 0.0,
+        "streaming": true
+      },
+      "llm_slow": {
+        "model": "ollama:qwen3:8b",
+        "temperature": 0.0,
+        "max_tokens": 1024
+      },
+      "llm": {
+        "model": "ollama:qwen3:8b"
+      }
+    },
+    "graph.nodes.request_clarification": {
+      "llm": {
+        "model": "ollama:qwen3:8b",
+        "temperature": 0.0
+      }
+    },
+     "graph.nodes.data_availability": {
+      "llm": {
+        "model": "ollama:qwen3:8b",
+        "temperature": 0.0
+      }
+    },
+    "graph.nodes.static_response": {
+      "enabled": true
+    },
+    "graph.process.nodes.execution": {
+      "llm_manager": {
+        "model": "ollama:qwen3:8b",
+        "temperature": 0.0
+      },
+      "max_iterations": 10,
+      "max_history_limit": 10,
+      "sql_config_ref": "graph.process.nodes.sql_agent",
+      "sql_validation_config_ref": "graph.process.nodes.sql_validation",
+      "rag_config_ref": "graph.process.rag_retriever"
+    },
+    "graph.process.nodes.sql_agent": {
+      "description": "Generates the initial SQLite query.",
+      "llm": {
+        "model": "ollama:qwen3:8b",
+        "temperature": 0.0
+      }
+    },
+    "graph.process.nodes.sql_validation": {
+      "description": "Reviews SQL for syntax and logic errors.",
+      "max_retries": 3,
+      "llm": {
+        "model": "ollama:qwen3:8b",
+        "temperature": 0.0
+      }
+    },
+    "graph.process.nodes.suggestor": {
+      "enabled": true,
+      "llm": {
+        "model": "ollama:qwen3:8b",
+        "temperature": 0.5,
+        "max_tokens": 2048
+      }
+    },
+    "graph.process.nodes.response_formatter": {
+      "llm": {
+        "model": "ollama:qwen3:8b",
+        "temperature": 0.3
+      }
+    },
+    "graph.process.rag_retriever": {
+      "query_rewriter": {
+        "llm": {
+          "model": "ollama:qwen3:8b",
+          "temperature": 0.0
+        }
+      },
+      "retriever": {
+        "embeddings": {
+          "provider": "ollama",
+          "model": "mxbai-embed-large:335m",
+          "base_url": "http://localhost:11434"
+        },
+        "retriever_k": 3,
+        "score_threshold": 0.0
+      },
+      "generate": {
+        "llm": {
+          "model": "ollama:qwen3:8b",
+          "temperature": 0.0
+        },
+        "prompt_repo": "rlm/rag-prompt"
+      },
+      "grade_documents": {
+        "min_relevance_score": 0.6,
+        "llm": {
+          "model": "ollama:gemma3:270m",
+          "temperature": 0.0
+        }
+      }
+    }
+  },
+  "offline_pipelines": {
+    "graph.pipelines.etl": {
+      "kaggle_dataset": "arashnic/fitbit",
+      "db_name": "fitbit.sqlite"
+    },
+    "graph.pipelines.user_profile": {
+      "baseline_window_days": 30,
+      "suggestiveness_level": 0.7
+    },
+    "graph.pipelines.knowledge_base": {
+      "chunk_size": 1000,
+      "chunk_overlap": 200,
+      "embedding_model": "mxbai-embed-large:335m"
+    }
+  }
+}

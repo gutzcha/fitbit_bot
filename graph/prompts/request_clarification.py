@@ -5,10 +5,11 @@ System prompt and finalized ChatPromptTemplate for the Clarification Node.
 Dynamically injects available metrics/profile fields from config.
 """
 
-from langchain_core.prompts import ChatPromptTemplate
-
-from graph.data_config import (PROFILE_AVAILABLE_FIELDS, SQL_AVAILABLE_METRICS,
-                               VECTOR_KNOWLEDGE_TOPICS)
+from graph.data_config import (
+    PROFILE_AVAILABLE_FIELDS,
+    SQL_AVAILABLE_METRICS,
+    VECTOR_KNOWLEDGE_TOPICS,
+)
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 1. DATA FORMATTERS
@@ -31,7 +32,7 @@ def _format_topics() -> str:
 # 2. SYSTEM STRING CONSTRUCTION
 # ─────────────────────────────────────────────────────────────────────────────
 
-_CLARIFICATION_SYSTEM_STRING = f"""
+CLARIFICATION_SYSTEM_STRING = f"""
 You are a helpful health data assistant.
 The user's query is ambiguous or lacks specific details.
 Your goal: Ask a SINGLE, concise question to clarify their intent.
@@ -46,13 +47,4 @@ RULES:
 - Specify all the metrics your can offer
 - If they ask 'How am I doing?', list 2-3 key metrics (e.g. Sleep, Steps) as options.
 - Keep it under 20 words.
-- Tone: Friendly and helpful.
 """
-
-# ─────────────────────────────────────────────────────────────────────────────
-# 3. FINAL EXPORTED PROMPT
-# ─────────────────────────────────────────────────────────────────────────────
-
-CLARIFICATION_PROMPT = ChatPromptTemplate.from_messages(
-    [("system", _CLARIFICATION_SYSTEM_STRING), ("human", "{user_input}")]
-)

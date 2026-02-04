@@ -1,0 +1,15 @@
+Blood Pressure Categories for Adults
+
+Blood pressure is recorded as two numbers: the systolic pressure (the pressure in your arteries when your heart beats) over the diastolic pressure (the pressure in your arteries between beats). The unit is millimetres of mercury (mm Hg). Keeping your blood pressure within a healthy range helps protect you from heart disease, stroke and kidney problems.
+
+- **Normal:** A healthy adult blood pressure reading has a systolic number below 120 mm Hg and a diastolic number below 80 mm Hg. This is often written as "less than 120/80 mm Hg". Maintaining a balanced diet, regular physical activity and managing stress support healthy blood pressure.
+
+- **Elevated:** A systolic reading of 120–129 mm Hg and a diastolic reading below 80 mm Hg is considered elevated blood pressure. Elevated readings indicate that your heart and arteries are working harder than normal, and lifestyle changes such as reducing sodium intake, increasing physical activity and achieving a healthy weight can help prevent progression to hypertension.
+
+- **Hypertension Stage 1:** Systolic pressure between 130 and 139 mm Hg or diastolic pressure between 80 and 89 mm Hg signals the first stage of high blood pressure. At this stage, health professionals recommend lifestyle modifications and may consider medication depending on your risk of heart disease or stroke.
+
+- **Hypertension Stage 2:** A systolic reading of 140 mm Hg or higher or a diastolic reading of 90 mm Hg or higher is classified as stage 2 hypertension. It usually requires both lifestyle changes and medication to reduce blood pressure and protect against complications.
+
+- **Severe Hypertension:** A systolic reading higher than 180 mm Hg and/or a diastolic reading higher than 120 mm Hg is considered severely high. In this situation, you should wait one minute and take another reading. If the second reading is just as high and you have symptoms such as chest pain, shortness of breath, back pain, numbness, weakness, vision changes or difficulty speaking, seek emergency medical care. Otherwise, contact your health-care professional immediately.
+
+Only a doctor or other qualified health professional can diagnose high blood pressure. They may also check whether your blood pressure is unusually low. Regular monitoring and appropriate treatment can help manage your blood pressure and reduce the risk of serious health problems.

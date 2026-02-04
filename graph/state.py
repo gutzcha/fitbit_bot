@@ -6,10 +6,18 @@ Complete LangGraph state schema for Fitbit Conversational AI assistant.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional, TypedDict, Annotated
+from typing import Annotated, Any, Dict, List, Optional, TypedDict
+
 from langgraph.graph.message import add_messages
-from graph.schemas import (ConversationState, CuratedKBQuery, Fact,
-                           IntentMetadata, ToolCall, UserProfile)
+
+from graph.schemas import (
+    ConversationState,
+    CuratedKBQuery,
+    Fact,
+    IntentMetadata,
+    ToolCall,
+    UserProfile,
+)
 
 # ─────────────────────────────────────────────────────────────────────────────
 # MAIN LANGGRAPH STATE

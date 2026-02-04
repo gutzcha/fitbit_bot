@@ -1,0 +1,284 @@
+# Health Data Index and Splitting Strategy Guide
+
+This document provides a complete overview of the files included in the `health_data_final` directory, including a thorough description of their content and tailored guidance for optimal chunking strategies to support vector-based retrieval in systems like LangChain + Chroma.
+
+---
+
+### 📄 `Blood_Oxygen.txt`
+
+**Content Description:**
+
+* Defines normal blood oxygen saturation (SpO₂) values.
+* Explains what constitutes hypoxia and when readings are critical.
+* Discusses measurement tools like pulse oximeters and accuracy factors.
+* Provides context for fluctuations during sleep, illness, or altitude.
+
+**Splitting Strategy:**
+
+* Small file — can be kept as a single document.
+* Optional: Split into 2 chunks (definitions vs. interpretation).
+* Chunk size: 300–500 characters, no overlap.
+
+---
+
+### 📄 `Blood_Pressure.txt`
+
+**Content Description:**
+
+* Categorizes blood pressure into normal, elevated, stage 1 & 2 hypertension, and crisis.
+* Defines systolic and diastolic readings.
+* Includes action thresholds and when to seek medical care.
+
+**Splitting Strategy:**
+
+* Small document — split into:
+
+  1. Definitions and thresholds
+  2. Risk implications and monitoring
+* Chunk size: 400–600 characters.
+
+---
+
+### 📄 `Body_Fat_Percentage.txt`
+
+**Content Description:**
+
+* Breaks down body fat ranges by gender and age.
+* Discusses athletic vs. average vs. obese ranges.
+* Explains measurement techniques (calipers, impedance, DEXA).
+
+**Splitting Strategy:**
+
+* 2–3 chunks: concepts, measurement methods, and interpretation.
+* Chunk size: 500–700 characters, 50-character overlap.
+
+---
+
+### 📄 `Chronic_Conditions.txt`
+
+**Content Description:**
+
+* Brief summaries of conditions like diabetes, low blood pressure, strep throat, kidney stones, long COVID.
+* Advice on symptom recognition and when to seek care.
+
+**Splitting Strategy:**
+
+* 4–5 chunks (one per condition if distinct).
+* Chunk size: 500–700 characters, overlap if symptoms/treatments are shared.
+
+---
+
+### 📄 `Exercise_and_Fitness.txt`
+
+**Content Description:**
+
+* Covers step goals, VO₂ max, overtraining, HIIT, strength, warm-up/cool-down.
+* Discusses benefits, schedules, and risk mitigation.
+
+**Splitting Strategy:**
+
+* 8–12 chunks by subtopic (HIIT, warm-up, strength, etc.).
+* Chunk size: 800–1,200 characters with 100-character overlap.
+
+---
+
+### 📄 `General_Health.txt`
+
+**Content Description:**
+
+* Broad range of general concerns: fever, posture, cholesterol, diabetes screening, hydration, immune health, etc.
+* Combines FAQs and preventive advice.
+
+**Splitting Strategy:**
+
+* 20+ chunks by topic group.
+* Chunk size: 800–1,200 characters, moderate overlap (100+ chars).
+
+---
+
+### 📄 `Heart_Rate_Zones.txt`
+
+**Content Description:**
+
+* Defines training zones by percentage of max heart rate.
+* Includes formulas and descriptions for each zone’s purpose.
+
+**Splitting Strategy:**
+
+* One chunk per zone or formula block.
+* Chunk size: 400–600 characters.
+
+---
+
+### 📄 `Mens_Health.txt`
+
+**Content Description:**
+
+* Covers prostate exams, testosterone levels, erectile dysfunction.
+
+**Splitting Strategy:**
+
+* Chunk per topic.
+* Chunk size: 400–600 characters, little to no overlap.
+
+---
+
+### 📄 `Mental_Health.txt`
+
+**Content Description:**
+
+* Stress, anxiety, depression, fatigue, mindfulness practices.
+
+**Splitting Strategy:**
+
+* 4–5 chunks by symptom.
+* Chunk size: 500–700 characters, minor overlap.
+
+---
+
+### 📄 `Nutrition.txt`
+
+**Content Description:**
+
+* Covers fats, sugars, hydration, fiber, vitamins, and food timing.
+* Balanced eating habits and actionable guidance.
+
+**Splitting Strategy:**
+
+* 6–8 chunks by nutrient type.
+* Chunk size: 800–1,000 characters with 100-character overlap.
+
+---
+
+### 📄 `Nutrition_and_Diet.txt`
+
+**Content Description:**
+
+* Macronutrient balance, food groups, reading labels, sodium and sugar reduction.
+* Discusses meal planning and weight loss.
+
+**Splitting Strategy:**
+
+* 6–10 chunks.
+* Chunk size: 800–1,200 characters.
+
+---
+
+### 📄 `Questions_and_Answers.txt`
+
+**Content Description:**
+
+* 100+ structured Q&A covering all health areas.
+* Each entry is a self-contained response.
+
+**Splitting Strategy:**
+
+* One chunk per Q&A.
+* Extract using a Q&A pattern parser.
+* Chunk size: 300–800 characters.
+
+---
+
+### 📄 `Reproductive_and_Sexual_Health.txt`
+
+**Content Description:**
+
+* HPV vaccination, libido concerns, contraception basics.
+
+**Splitting Strategy:**
+
+* 2–3 chunks.
+* Chunk size: 300–500 characters.
+
+---
+
+### 📄 `Seniors_Health.txt`
+
+**Content Description:**
+
+* Vaccines, dementia signs, fall prevention, mobility.
+
+**Splitting Strategy:**
+
+* One chunk per concern.
+* Chunk size: 400–600 characters.
+
+---
+
+### 📄 `test.txt` and `test2.txt`
+
+**Content Description:**
+
+* Placeholder or test files. Likely ignorable.
+
+**Splitting Strategy:**
+
+* Skip from ingestion unless used for validation.
+
+---
+
+### 📄 `Vital_Signs.txt`
+
+**Content Description:**
+
+* Covers heart rate, respiration, blood pressure, body temperature.
+* Lists normal ranges and interpretations.
+
+**Splitting Strategy:**
+
+* One chunk per vital.
+* Chunk size: 400–600 characters.
+
+---
+
+### 📄 `VO2_Max.txt`
+
+**Content Description:**
+
+* VO₂ max significance, average values, and training to improve it.
+
+**Splitting Strategy:**
+
+* Split into 2 chunks (explanation + improvement).
+* Chunk size: 400–600 characters.
+
+---
+
+### 📄 `Womens_Health.txt`
+
+**Content Description:**
+
+* Menopause, pregnancy, PCOS, postpartum recovery.
+
+**Splitting Strategy:**
+
+* Chunk by condition/topic.
+* Chunk size: 400–700 characters.
+
+---
+
+### 📄 `Workout_Plans_and_Goals.txt`
+
+**Content Description:**
+
+* Structured workout plans for:
+
+  * 5K, 10K, marathon
+  * HIIT
+  * Muscle gain, weight loss
+  * Strength routines
+* Weekly progression plans, cross-training, rest periods.
+
+**Splitting Strategy:**
+
+* Chunk by workout type or week block.
+* Chunk size: 800–1,200 characters with overlap between weeks.
+
+---
+
+All chunks should include metadata:
+
+* `source`: Filename
+* `description`: File summary
+* `topic`: Optional thematic category
+

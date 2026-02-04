@@ -18,9 +18,7 @@ from langchain_core.prompts import ChatPromptTemplate
 
 from graph.schemas import UserProfile
 
-# Paths
-PROFILE_DIR = Path("dataset/user_profiles")
-PROFILE_DIR.mkdir(parents=True, exist_ok=True)
+from graph.consts import PROFILE_DIR
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -56,9 +54,10 @@ class MemoryManager:
     Controller for persistent user data (Profiles, Preferences).
     """
 
-    def __init__(self, user_id: int):
+    def __init__(self, user_id: int, profile_dir=PROFILE_DIR):
+        profile_dir = Path(profile_dir) if isinstance(profile_dir, str) else profile_dir
         self.user_id = user_id
-        self.profile_path = PROFILE_DIR / f"{user_id}.json"
+        self.profile_path = Path(PROFILE_DIR) / f"{user_id}.json"
 
     def load_user_profile(self) -> Optional[UserProfile]:
         """

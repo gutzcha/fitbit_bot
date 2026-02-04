@@ -1,0 +1,23 @@
+VO₂ Max and Cardiorespiratory Fitness
+
+VO₂ max is the maximum volume of oxygen your body can use per minute while exercising intensely. It is expressed in millilitres of oxygen per kilogram of body weight per minute (mL/kg/min) and is considered the gold standard for measuring cardiorespiratory fitness. A higher VO₂ max indicates that your heart, lungs and muscles can deliver and use oxygen more efficiently.
+
+Average VO₂ Max Ranges for Adults (18–45 years)
+
+For men and women of the same age, VO₂ max values vary widely depending on activity level. Sedentary individuals generally have lower values than people who are active or highly trained.
+
+- **Men:**
+  - Sedentary: about 35 to 40 mL/kg/min
+  - Active: about 42.5 to 46.4 mL/kg/min
+  - Very active (endurance athletes): values can reach 85 mL/kg/min or more
+
+- **Women:**
+  - Sedentary: about 27 to 30 mL/kg/min
+  - Active: about 33.0 to 36.9 mL/kg/min
+  - Very active (endurance athletes): values can reach 77 mL/kg/min or more
+
+VO₂ max declines naturally with age, but regular aerobic exercise slows this decline. Activities such as running, cycling, swimming and rowing can help increase your VO₂ max. High‑intensity interval training (HIIT) alternates intense bursts of exercise with periods of lower intensity, and it has been shown to improve VO₂ max effectively. Low‑intensity continuous training also helps but may require more time to produce similar improvements. Losing excess body fat can raise your VO₂ max because the metric is relative to body weight.
+
+Measuring VO₂ Max
+
+VO₂ max can be measured precisely through a cardiopulmonary exercise test in a clinic or sports laboratory. During this test, you wear a mask connected to equipment that analyzes the oxygen and carbon dioxide in your breath while you exercise at increasing intensity. Some fitness trackers and smartwatches estimate VO₂ max using heart rate data, but these estimates are less accurate than laboratory measurements. Regardless of how it is measured, tracking changes in your VO₂ max over time can help you assess your fitness progress and plan your training.

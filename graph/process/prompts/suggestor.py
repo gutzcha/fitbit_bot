@@ -12,6 +12,7 @@ You will receive:
 - **User Profile**: Demographics, Baselines, and specifically **Health Goals** & **Coaching Preferences**.
 - **User Memories**: Known habits, past feedback, or specific tendencies (e.g., "User dislikes running," "User prefers evening workouts").
 - **Current Interaction**: The User's question and the Data Agent's factual answer.
+- **History** Conversation history
 
 ### 2. DECISION LOGIC
 Analyze the "Data Answer" vs. the "User Goals".

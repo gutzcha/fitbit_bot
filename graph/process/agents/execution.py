@@ -1,30 +1,63 @@
-# graph/process/agents/execution.py
+"""
+graph/process/agents/execution.py
 
-from langchain.agents import create_agent  # Your custom factory
-from graph.helpers import make_llm
+Refactored execution agent with proper context injection using LangChain v1.0+ create_agent.
+"""
+
+from __future__ import annotations
+
+from typing import Any, Dict
+
+from langchain.agents import create_agent
+from langchain_core.language_models.chat_models import BaseChatModel
+from langchain_core.runnables import Runnable
+
 from graph.process.prompts.execution import EXECUTION_SYSTEM_PROMPT
 from graph.process.schemas import ExecutionResponse
-from graph.process.tools import fetch_knowledge_base, fetch_user_metrics_sql
+from graph.process.tools import make_rag_tool, make_sql_tool
 
 
-
-def build_execution_agent(provider: str = "ollama", model_type: str = "slow"):
+def build_execution_agent(
+        manager_llm: BaseChatModel,
+        sql_config: Dict[str, Any],
+        sql_validation_config: Dict[str, Any],
+        rag_config: Dict[str, Any],
+) -> Runnable:
     """
-    Builds the Execution Agent Runnable with Structured Output enforcement.
+    Build an execution agent using LangChain v1.0+ create_agent.
+
+    The agent receives messages enriched with context system messages.
+    Returns ExecutionResponse via structured output.
+
+    Key changes from deprecated create_react_agent:
+    - Uses create_agent (LangChain v1.0+)
+    - Context injected as system messages in the message list
+    - Structured output via response_format parameter
+    - No need for state_modifier or prompt templates
     """
-    # 1. Setup LLM
-    llm = make_llm(provider=provider, model_type=model_type)
 
-    # 2. Setup Tools
-    tools = [fetch_knowledge_base, fetch_user_metrics_sql]
-
-    # 3. Create Agent
-    # We pass 'ExecutionResponse' to response_format to force JSON output
-    agent_runnable = create_agent(
-        model=llm,
-        tools=tools,
-        system_prompt=EXECUTION_SYSTEM_PROMPT,
-        response_format=ExecutionResponse
+    # Build tools
+    sql_tool = make_sql_tool(
+        agent_config=sql_config,
+        validation_config=sql_validation_config,
     )
 
-    return agent_runnable
+    rag_tool = make_rag_tool(
+        config=rag_config,
+    )
+
+    tools = [sql_tool, rag_tool]
+
+    # create_agent handles:
+    # - Tool binding to model
+    # - ReAct loop execution
+    # - Structured output via response_format
+    # - Message history management
+    agent = create_agent(
+        model=manager_llm,
+        tools=tools,
+        system_prompt=EXECUTION_SYSTEM_PROMPT,
+        response_format=ExecutionResponse,
+    )
+
+    return agent

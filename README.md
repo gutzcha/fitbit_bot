@@ -1,312 +1,218 @@
-# Fitbit Bot – Conversational Health Assistant
+# Fitbit Bot - Conversational Health Assistant
 
 ## Overview
 
-This project implements a conversational AI assistant that processes and reasons over Fitbit-style health data. The system is built around a **graph-based orchestration layer** using LangGraph that routes user requests through intent detection, clarification, and data-processing flows.
+This project implements a conversational AI assistant that processes Fitbit-style health data. A LangGraph workflow routes each user message through intent classification, clarification, data availability, static responses, and a data-processing execution node.
 
 The assistant can:
-- Answer questions about health metrics (steps, heart rate, calories, etc.)
-- Provide health coaching and suggestions based on user data
-- Access a knowledge base of health information via RAG
-- Handle complex queries requiring SQL queries and data analysis
-- Support multiple LLM providers (Ollama, Anthropic)
+- Answer questions about health metrics (steps, heart rate, calories, weight)
+- Provide coaching suggestions based on user profile data
+- Use a knowledge base (RAG) for general health questions
+- Execute SQL queries against a local SQLite database
 
----
+## Safety Disclaimer
+
+This repository is a proof-of-concept example. The knowledge base content was generated with ChatGPT and is not a reliable source of medical information. Do not use this system for medical advice or clinical decisions.
 
 ## Architecture
 
-The system uses a **multi-stage graph architecture**:
+Main graph flow (see `graph/graph.py`):
 
-1. **Intent Detection** - Classifies user queries and determines confidence
-2. **Clarification** - Requests additional information when needed
-3. **Planning** - Creates execution plans for data queries
-4. **Execution** - Executes SQL queries and retrieves health knowledge
-5. **Suggestion** - Adds coaching suggestions based on user profile and data
-6. **Static Responses** - Handles greetings and out-of-scope queries
+```
+INTENT -> CLARIFICATION | STATIC_RESPOND | DATA_AVAILABILITY | PROCESS
+PROCESS -> CLARIFICATION | SUGGESTOR | END
+```
 
-### Key Components
+Key components:
+- LangGraph for orchestration
+- LangChain for LLM integration and tool calling
+- SQLite for Fitbit data
+- Chroma for vector search (RAG)
+- Streamlit UI
 
-- **LangGraph**: Orchestrates the conversation flow
-- **LangChain**: LLM integration and tool calling
-- **Chroma**: Vector database for health knowledge base (RAG)
-- **SQLite**: Stores Fitbit health data
-- **Streamlit**: Web UI for interacting with the assistant
-- **DuckDB**: SQL query engine for data analysis
-
----
+The RAG pipeline is implemented as a subgraph under `graph/process/rag_retriever` and used as a tool by the execution agent.
 
 ## Project Structure
 
 ```
 fitbit_bot/
-├── app/                      # Streamlit application
-│   ├── app.py               # Main UI entry point
-│   └── chat_config.json     # Runtime configuration
-├── graph/                   # Core graph architecture
-│   ├── graph.py             # Main graph builder
-│   ├── state.py             # State schema definitions
-│   ├── nodes/               # Graph nodes (intent, clarification, static)
-│   ├── chains/              # LangChain chains
-│   ├── process/             # Data processing subgraph
-│   │   ├── agents/          # Planner, Executor, Suggestor agents
-│   │   ├── tools/           # SQL tools and RAG retriever
-│   │   └── rag_retrievaer/  # RAG graph for knowledge base
-│   ├── tools/               # Tool definitions
-│   └── prompts/             # Prompt templates
-├── dataset/                 # Health data and databases
-│   ├── clean/               # Processed CSV files
-│   ├── db/                  # SQLite database and vector store
-│   ├── health_data/         # Health knowledge base source files
-│   └── user_profiles/       # User profile JSON files
-├── notebooks/               # Jupyter notebooks for exploration
-├── tests/                   # Unit and integration tests
-├── main.py                  # CLI entry point
-├── pyproject.toml           # Project dependencies (uv)
-└── README.md                # This file
+|-- app/
+|   |-- app.py                 # Streamlit UI
+|   `-- config.json            # Runtime configuration
+|-- graph/
+|   |-- graph.py               # Main LangGraph workflow
+|   |-- state.py               # State schema
+|   |-- nodes/                 # Intent, clarification, static, suggestor
+|   |-- chains/                # Prompt + model chains
+|   |-- agents/                # Suggestor agent
+|   |-- process/               # Execution agent and tools
+|   |   |-- agents/            # Execution + SQL agent
+|   |   |-- tools/             # SQL and RAG tools
+|   |   `-- rag_retriever/      # RAG subgraph
+|   |-- prompts/               # Prompt templates
+|   `-- tools/                 # Shared tool definitions
+|-- dataset/
+|   |-- fitbit_data_ingestion_sqlite3.py
+|   |-- health_kb_loader.py
+|   |-- populate_user_profile.py
+|   |-- db/                    # SQLite DB + vector store (not checked in)
+|   |-- clean/                 # Processed CSVs (not checked in)
+|   `-- user_profiles/         # User profile JSON files (generated)
+|-- tests/
+|-- main.py
+|-- pyproject.toml
+`-- README.md
 ```
 
----
+Note: `.gitignore` excludes `.env`, `.venv`, `.sqlite`, `.sqlite3`, `.bin`, `.csv`, and other local artifacts. You must generate the DB, KB, and user profiles locally.
 
 ## Prerequisites
 
-- **Python 3.11+**
-- **uv** - Fast Python package installer (install from [astral.sh/uv](https://astral.sh/uv))
-- **Ollama** (optional, for local LLM) - Install from [ollama.ai](https://ollama.ai)
-  - Required models: `mistral:8b` (or similar) and `mxbai-embed-large:335m` for embeddings
+Required:
+- Python 3.11+
+- uv (https://astral.sh/uv) or another Python environment manager
+- kagglehub for dataset download (installed via dependencies)
+- Ollama running locally for the default config
 
----
+Optional (depending on your config):
+- OpenAI API key (if you switch embeddings or models to OpenAI)
+- Anthropic API key (if you switch models to Anthropic)
+- LangSmith credentials (the RAG generation chain pulls a prompt repo by default)
 
-## Setup Instructions
-
-### 1. Install uv
-
-If you haven't installed `uv` yet:
-
-```bash
-# Windows (PowerShell)
-powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-
-# macOS/Linux
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
-
-### 2. Clone and Navigate to Project
+## Installation
 
 ```bash
-cd fitbit_bot
-```
-
-### 3. Create Virtual Environment and Install Dependencies
-
-```bash
-# Create virtual environment and install all dependencies
+# From the repo root
 uv venv
+.venv\Scripts\Activate.ps1   # Windows PowerShell
+# source .venv/bin/activate   # macOS/Linux
 
-# Activate virtual environment
-# Windows (PowerShell)
-.venv\Scripts\Activate.ps1
-# macOS/Linux
-source .venv/bin/activate
-
-# Install project dependencies
 uv pip install -e .
 ```
 
-### 4. Set Up Environment Variables
-
-Create a `.env` file in the project root:
+Create a `.env` file in the project root if needed:
 
 ```bash
-# LLM Provider Configuration
-# Options: "ollama" or "anthropic"
-PROVIDER=ollama
-
-# Anthropic API (if using Anthropic provider)
-ANTHROPIC_API_KEY=your_api_key_here
-
-# LangSmith (optional, for tracing)
-LANGSMITH_API_KEY=your_langsmith_key_here
+# Optional: LangSmith
+LANGSMITH_API_KEY=your_key
 LANGSMITH_TRACING=true
 LANGSMITH_PROJECT=fitbit-bot
+
+# Optional: Anthropic
+ANTHROPIC_API_KEY=your_key
+
+# Optional: OpenAI
+OPENAI_API_KEY=your_key
 ```
 
-### 5. Set Up Ollama (if using local LLM)
+## Models and Providers
 
-If you're using Ollama as your provider:
+The default runtime config uses Ollama models defined in `app/config.json`. Make sure Ollama is installed and running.
+
+Example model pulls (match `app/config.json`):
 
 ```bash
-# Pull required models
-ollama pull mistral:8b
+ollama pull qwen3:8b
+ollama pull gemma3:270m
 ollama pull mxbai-embed-large:335m
 ```
 
-### 6. Initialize Knowledge Base (Optional)
+If you want to use OpenAI or Anthropic models instead:
+- Update the model strings under `runtime_nodes` in `app/config.json` to the provider you want.
+- Ensure the matching API key is set in `.env`.
+- For embeddings, update the retriever config in `app/config.json` or the ingestion defaults in `graph/consts.py`.
 
-If the knowledge base hasn't been populated:
+## Data Setup (Optional)
+
+If the dataset, DB, or KB are missing, rebuild them locally:
 
 ```bash
-python health_kb_loader.py
+# Download Fitbit data from Kaggle and build SQLite + clean CSVs
+python dataset/fitbit_data_ingestion_sqlite3.py
+
+# Generate user profiles from the DB
+python dataset/populate_user_profile.py
+
+# Build the knowledge base (Chroma)
+python dataset/health_kb_loader.py
 ```
 
-This will load health data from `dataset/health_data/` into the Chroma vector database.
+To run the full data setup in one shot (ingestion, profiles, KB), use:
 
----
+```bash
+python dataset/generate_dataset.py
+```
+
+Kaggle ingestion requires Kaggle credentials to be available to `kagglehub`.
 
 ## Running the Application
-
-### Streamlit Web UI (Recommended)
 
 ```bash
 streamlit run app/app.py
 ```
 
-The application will open in your browser at `http://localhost:8501`.
-
-**Features:**
-- Interactive chat interface
-- Real-time graph execution visualization
-- Model provider switching (Ollama ↔ Anthropic)
-- User profile display
-- Debug trace viewer
-
-
+The UI exposes controls for:
+- intent model
+- confidence threshold
+- execution history limit
+- execution max iterations
+- suggestor toggle
 
 ## Configuration
 
-Runtime configuration can be adjusted in `app/chat_config.json` or via the Streamlit sidebar:
+Runtime settings live in `app/config.json`. The file uses a flat `runtime_nodes` map. Key entries include:
 
-- **Provider**: Switch between `ollama` and `anthropic`
-- **Slow Fallback**: Enable/disable fallback to larger model for uncertain intents
-- **Max History Context**: Number of conversation turns to include in context
-- **User ID**: two users defined
----
+- `graph.nodes.intent`
+- `graph.nodes.request_clarification`
+- `graph.nodes.data_availability`
+- `graph.nodes.static_response`
+- `graph.process.nodes.execution`
+- `graph.process.nodes.sql_agent`
+- `graph.process.nodes.sql_validation`
+- `graph.process.rag_retriever`
+- `graph.process.nodes.suggestor`
 
-## Key Features
+Model strings are passed directly to `init_chat_model` (for example `ollama:qwen3:8b`). Embedding provider selection is controlled in the RAG retriever config and in `graph/consts.py` for ingestion defaults.
 
-### 1. Intent Classification
-- Automatically detects user intent (data query, greeting, out-of-scope, etc.)
-- Uses confidence scoring with optional fallback to larger model
+The process node (`graph/process/process.py`) loads configuration via references in `graph.process.nodes.execution`:
+- `sql_config_ref` (defaults to `graph.process.nodes.sql_agent`)
+- `sql_validation_config_ref` (defaults to `graph.process.nodes.sql_validation`)
+- `rag_config_ref` (defaults to `graph.process.rag_retriever`)
 
-### 2. SQL Query Generation
-- Generates optimized SQL queries for Fitbit data
-- Pre-defined tools for common queries (steps, heart rate, calories, etc.)
-- Custom SQL generation for complex queries
-
-### 3. RAG-Powered Knowledge Base
-- Retrieves relevant health information from curated knowledge base
-- Uses semantic search with embeddings
-- Provides citations and source documents
-
-### 4. Personalized Coaching
-- Suggests health improvements based on user profile and data
-- Considers user goals, preferences, and historical patterns
-
-### 5. Multi-Provider Support
-- **Ollama**: Local, privacy-focused, no API costs
-- **Anthropic**: Cloud-based, high-quality responses
-
----
-
-## Data Sources
-
-The system uses several data sources:
-
-1. **Fitbit SQLite Database** (`dataset/db/fitbit.sqlite`)
-   - Daily activity, heart rate, steps, calories, weight logs
-
-2. **User Profiles** (`dataset/user_profiles/*.json`)
-   - Health goals, body metrics, coaching preferences
-
-3. **Health Knowledge Base** (`dataset/db/health_kb/`)
-   - Vector database of health information
-   - Source files in `dataset/health_data/`
-
----
-
-## Testing
-
-Run the test suite:
-(mock tests, not operational)
-```bash
-# Run all tests
-pytest
-
-# Run specific test file
-pytest tests/test_chains.py
-
-# Run with coverage
-pytest --cov=graph --cov-report=html
-```
-
----
+If you rename these keys or move blocks in `app/config.json`, update the references accordingly.
 
 ## Development
 
-### Code Formatting
+Changing config:
+- Update `app/config.json` under `runtime_nodes` to change models, temperatures, and node behavior.
+- If you add a new node or chain, wire it in `graph/graph.py` and add its config block in `app/config.json`.
+- If you modify a chain prompt, update the corresponding file in `graph/prompts/` and re-run the relevant tests.
 
-```bash
-# Format code
-black .
+Changing chains and nodes:
+- Chains live in `graph/chains/` and are called by nodes in `graph/nodes/`.
+- If you change a chain interface (input keys or output shape), update the node that calls it and the tests in `graph/chains/tests` and `graph/nodes/tests`.
+- If you add or remove tools, update `graph/process/agents/execution.py` and `graph/process/tools/`.
 
-# Sort imports
-isort .
+## Testing
+
+Live integration tests (LLMs, DB, KB) are under:
+
+```
+python -m pytest graph/chains/tests graph/nodes/tests graph/process/tests
 ```
 
-### Project Dependencies
+Run from the repo root. These tests require Ollama to be running and the SQLite DB and KB to exist.
 
-Dependencies are managed via `pyproject.toml` and installed with `uv`. Key dependencies include:
+Legacy tests in `tests/` are not kept in sync with the current graph flow.
 
-- `langchain` & `langgraph` - LLM orchestration
-- `langchain-anthropic` & `langchain-ollama` - LLM providers
-- `langchain-chroma` - Vector database
-- `streamlit` - Web UI
-- `duckdb` & `duckdb-engine` - SQL query engine
-- `pytest` - Testing framework
+## Future Work and Known Limitations
 
-### Adding New Tools
-
-1. Define tool in `graph/tools/definitions.py` or `graph/process/tools/`
-2. Register tool in the execution agent (`graph/process/agents/execution.py`)
-3. Update planner prompts if needed
-
-### Extending the Graph
-
-1. Create new node in `graph/nodes/` or `graph/process/nodes/`
-2. Add node to graph in `graph/graph.py` or `graph/process/process_graph.py`
-3. Define routing logic in conditional edges
-
----
-
-## Troubleshooting
-
-### Ollama Connection Issues
-- Ensure Ollama is running: `ollama serve`
-- Check model availability: `ollama list`
-- Verify base URL in environment (default: `http://localhost:11434`)
-
-### Knowledge Base Not Found
-- Run `python health_kb_loader.py` to populate the vector database
-- Check that `dataset/db/health_kb/` exists and contains data
-
-### Database Connection Errors
-- Verify `dataset/db/fitbit.sqlite` exists
-- Check file permissions
-- Ensure database was properly initialized
-
-### Import Errors
-- Activate virtual environment: `.venv\Scripts\Activate.ps1` (Windows) or `source .venv/bin/activate` (macOS/Linux)
-- Reinstall dependencies: `uv pip install -e .`
-
----
-
-## License
-
-This project was created as a home assignment. See assignment PDF for details.
-
----
+- Tests are rudimentary and most require LLMs as judges. The evaluation framework needs more work.
+- User preferences are not stored as real long-term memory. The system currently loads mock user profiles from JSON files and does not persist updates.
+- Source grounding is incomplete. Classes like `Fact` and `SourceRef` exist in `graph/schemas.py`, but the runtime does not enforce that responses are grounded only in retrieved sources. This can allow hallucinations.
+- RAG quality depends on the generated knowledge base and should not be treated as authoritative.
+- The Fitbit dataset covers a single month in 2016. The system also hardcodes "today" as `2016-04-11` in `graph/consts.py`.
 
 ## Acknowledgments
 
-- Built with [LangGraph](https://github.com/langchain-ai/langgraph) and [LangChain](https://github.com/langchain-ai/langchain)
-- Uses [uv](https://github.com/astral-sh/uv) for fast package management
-- Health data from Fitabase export format
+- Fitbit dataset on Kaggle: https://www.kaggle.com/datasets/arashnic/fitbit

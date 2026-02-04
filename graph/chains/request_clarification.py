@@ -9,9 +9,6 @@ from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnableLambda
 
-# ✅ Import the ready-to-use Template object
-from graph.prompts.request_clarification import CLARIFICATION_PROMPT
-
 
 def build_clarification_chain(llm: BaseChatModel) -> RunnableLambda:
     """
@@ -20,6 +17,6 @@ def build_clarification_chain(llm: BaseChatModel) -> RunnableLambda:
 
     # 1. Construct Chain
     # The prompt already has the schema injected, so we just pipe it.
-    chain = CLARIFICATION_PROMPT | llm | StrOutputParser()
+    chain = llm | StrOutputParser()
 
     return chain

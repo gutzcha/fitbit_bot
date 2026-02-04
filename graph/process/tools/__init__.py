@@ -1,4 +1,4 @@
-from .sql_metrics import fetch_user_metrics_sql
-from .rag_retriever import fetch_knowledge_base
+from .rag_retriever import make_rag_tool
+from .sql_metrics import make_sql_tool
 
-__all__ = ["fetch_user_metrics_sql", "fetch_knowledge_base"]
+__all__ = ["make_sql_tool", "make_rag_tool"]

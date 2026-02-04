@@ -215,11 +215,12 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-dataset/
 *.csv
 *.parquet
 *.sqlite
 *.sqlite3
+*.pdf
+*.bin
 
 # Vector stores
 .chroma/

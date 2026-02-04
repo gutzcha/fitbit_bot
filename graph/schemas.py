@@ -9,11 +9,16 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Literal, Optional, Set
 
-from pydantic import (BaseModel, ConfigDict, Field, confloat, field_validator,
-                      model_validator)
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    confloat,
+    field_validator,
+    model_validator,
+)
 
-from graph.data_config import (INTENT_MIN_SOURCES, INTENT_RESPONSE_TYPE,
-                               SOURCE_ORDER)
+from graph.data_config import INTENT_MIN_SOURCES, INTENT_RESPONSE_TYPE, SOURCE_ORDER
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 1. ROUTING TYPES (High-Level Strategy)
@@ -127,10 +132,6 @@ class CuratedKBQuery(BaseModel):
     entries: List[CuratedKBEntry]
 
 
-
-
-
-
 # ─────────────────────────────────────────────────────────────────────────────
 # 5. USER PROFILE MODELS
 # ─────────────────────────────────────────────────────────────────────────────
@@ -191,6 +192,7 @@ class SystemState(BaseModel):
 
 class UserProfile(BaseModel):
     user_id: int
+    user_name: str
     demographics: Demographics
     body_metrics: BodyMetrics
     baselines: Baselines

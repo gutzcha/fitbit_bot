@@ -1,54 +1,72 @@
 # graph/process/tools/rag_retriever.py
 
-from typing import Tuple, Dict, Any
-from langchain_core.tools import tool, convert_runnable_to_tool
-from graph.process.rag_retrievaer.rag_graph import build_rag_app
-from graph.process.rag_retrievaer.rag_state import GraphState
+from typing import Any, Dict, Tuple
 
-# Build the graph once to avoid overhead
-rag_app = build_rag_app()
+from langchain_core.tools import Tool, tool
 
-@tool(response_format="content_and_artifact")
-def fetch_knowledge_base(question: str) -> Tuple[str, Dict[str, Any]]:
+from graph.process.rag_retriever.rag_graph import build_rag_app
+
+
+def make_rag_tool(config: Dict[str, Any]):
     """
-    Search the Knowledge Base for general health, science, and behavioral information.
+    Factory that creates a configured RAG tool.
 
     Args:
-        question (str): The scientific or health-related question to ask.
+        config (Dict): The configuration dictionary containing 'retriever', 'grade_documents', etc.
+                       This is passed down from the Execution Agent.
 
     Returns:
-        Tuple[str, Dict]:
-            - The natural language summary (visible to Agent).
-            - The dictionary containing source documents (visible to Validator).
+        Tool: A LangChain Tool instance ready for the agent to use.
     """
-    # 1. Invoke RAG
-    result = rag_app.invoke({
-        "question": question,
-        "generation": "",
-        "documents": [],
-        "no_data_available": False
-    })
 
-    # 2. Prepare the "Artifact"
-    artifact = {
-        "sources": [
+    # 1. Build the specific RAG app instance for this tool
+    # This ensures the tool uses the specific models/settings defined in config.json
+    rag_app = build_rag_app(rag_config=config)
+
+    # 2. Define the tool function (Closure)
+    # The @tool decorator is applied here so it captures the specific 'rag_app' instance
+    @tool(response_format="content_and_artifact")
+    def fetch_knowledge_base(question: str) -> Tuple[str, Dict[str, Any]]:
+        """
+        Search the Knowledge Base for general health, science, and behavioral information.
+
+        Args:
+            question (str): The scientific or health-related question to ask.
+
+        Returns:
+            Tuple[str, Dict]:
+                - The natural language summary (visible to Agent).
+                - The dictionary containing source documents (visible to Validator/Artifacts).
+        """
+        # A. Invoke RAG
+        # We initialize the state with defaults
+        result = rag_app.invoke(
             {
-                "content": doc.page_content,
-                "metadata": doc.metadata
-            } for doc in result.get("documents", [])
-        ],
-        "full_generation": result.get("generation"),
-        "raw_status": "no_data" if result.get("no_data_available") else "success"
-    }
+                "question": question,
+                "generation": "",
+                "documents": [],
+                "no_data_available": False,
+            }
+        )
 
-    # 3. Prepare the "Content" (Simple Text for Agent)
-    if result.get("no_data_available"):
-        content = "No relevant scientific data found in the knowledge base."
-    else:
-        content = result.get("generation") or "Data retrieved successfully."
+        # B. Prepare the "Artifact" (Hidden from LLM context, used for citation/validation)
+        artifact = {
+            "sources": [
+                {"content": doc.page_content, "metadata": doc.metadata}
+                for doc in result.get("documents", [])
+            ],
+            "full_generation": result.get("generation"),
+            "raw_status": "no_data" if result.get("no_data_available") else "success",
+        }
 
-    # Optional: Print to verify during debugging
-    # print(f"--artifact--: {artifact}")
+        # C. Prepare the "Content" (Visible to the Agent)
+        if result.get("no_data_available"):
+            content = "No relevant scientific data found in the knowledge base."
+        else:
+            # Return the generated answer from the RAG pipeline
+            content = result.get("generation") or "Data retrieved successfully."
 
-    # 4. Return Tuple (Content, Artifact)
-    return content, artifact
+        return content, artifact
+
+    # 3. Return the configured tool
+    return fetch_knowledge_base

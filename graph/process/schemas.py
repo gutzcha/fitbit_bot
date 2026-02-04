@@ -108,10 +108,12 @@ class ProcessPlan(BaseModel):
             tags.append("uses_kb")
         return tags
 
+
 class ExecutionResponse(BaseModel):
     """
     Structured output for the Execution Agent.
     """
+
     answer: str = Field(
         description="The final comprehensive answer to the user, synthesizing data from all tools."
     )
@@ -120,12 +122,13 @@ class ExecutionResponse(BaseModel):
     )
     needs_clarification: bool = Field(
         default=False,
-        description="Set to True ONLY if critical data is missing and you cannot answer safely."
+        description="Set to True ONLY if critical data is missing and you cannot answer safely.",
     )
     clarification_question: Optional[str] = Field(
         default=None,
-        description="If needs_clarification is True, provide the specific question to ask the user."
+        description="If needs_clarification is True, provide the specific question to ask the user.",
     )
+
 
 class GroundingMetadata(BaseModel):
     """
@@ -138,7 +141,6 @@ class GroundingMetadata(BaseModel):
     )
     table_names: List[str] = Field(default_factory=list, description="Tables accessed.")
     confidence: float = Field(default=1.0, description="Confidence score (0.0 to 1.0).")
-
 
 
 class SQLAgentResponse(GroundingMetadata):

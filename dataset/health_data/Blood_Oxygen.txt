@@ -1,0 +1,15 @@
+Blood Oxygen Saturation (SpO2)
+
+Blood oxygen saturation refers to the percentage of oxygen carried by haemoglobin in your blood. It is commonly measured with a pulse oximeter, a small device that clips to a fingertip and estimates the proportion of oxygen-saturated haemoglobin (SpO2). A more precise, but invasive, test called arterial blood gas (ABG) measures the partial pressure of oxygen (PaO2) in arterial blood.
+
+- **Normal SpO2 Range:** For healthy individuals at sea level, a normal pulse oximeter reading is generally between 95 % and 100 %. Values slightly below 95 % can still be normal for people with lung or heart conditions or for those living at high altitude, where oxygen levels in the air are lower.
+
+- **Low Oxygen Levels:** SpO2 readings below about 95 % may indicate reduced oxygen saturation. If your SpO2 falls under 92 %, health professionals often recommend further evaluation, and a reading of 90 % or below is considered abnormally low (hypoxemia). Signs of low oxygen include shortness of breath, chest pain, confusion, rapid heartbeat and bluish skin or lips. If your SpO2 reading is very low or you have symptoms, seek medical help.
+
+- **ABG Reference Values:** An arterial blood gas test measures oxygen in millimetres of mercury (mm Hg). In healthy lungs, the partial pressure of oxygen typically ranges from about 75 to 100 mm Hg.
+
+- **Factors Affecting SpO2 Readings:** Poor circulation, cold hands, nail polish, and movement can influence pulse oximeter readings. Smoking can lead to falsely high readings because pulse oximeters cannot distinguish between oxygen and carbon monoxide bound to haemoglobin. If you monitor SpO2 at home, ensure your hand is warm, rest it below heart level, stay still during measurement and follow the device instructions.
+
+- **When to Contact a Health Professional:** If you have lung disease, heart disease or a condition that affects breathing, your doctor will tell you what range is normal for you. Contact your healthcare provider if you are concerned about your oxygen levels or if you experience symptoms such as persistent shortness of breath, chest pain or confusion. Extremely low readings (below the low 90s) may require supplemental oxygen or emergency care.
+
+Blood oxygen saturation values are a useful indicator of how effectively your body is transporting oxygen, but they are only one piece of the overall picture. Always discuss your readings with a healthcare professional for accurate interpretation and guidance.

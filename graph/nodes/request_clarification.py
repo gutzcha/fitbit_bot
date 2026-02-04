@@ -1,28 +1,42 @@
 """
 graph/nodes/request_clarification.py
-
 Node responsible for pausing the conversation to ask for specifics.
 Wraps the clarification chain but prioritizes specific questions from the Planner.
+===
 """
 
 from typing import Any, Callable, Dict
 
-from langchain_core.language_models.chat_models import BaseChatModel
+from langchain.chat_models import init_chat_model
 
 from graph.chains.request_clarification import build_clarification_chain
+from graph.defaults.request_clarification import ClarificationNodeConfig
 from graph.state import AssistantState
+from langchain_core.messages import AIMessage, SystemMessage, HumanMessage, trim_messages
+from graph.helpers import serialize_context_to_json
+from graph.memory import trim_conversation_history
+from graph.prompts.request_clarification import CLARIFICATION_SYSTEM_STRING
 
-
-def make_clarification_node(
-    llm: BaseChatModel,
-) -> Callable[[AssistantState], Dict[str, Any]]:
+def make_clarification_node(config_dict: Dict[str, Any]) -> Callable[[AssistantState], Dict[str, Any]]:
     """
-    Factory that creates the clarification node executable.
+    Factory that creates the clarification node executable using the provided configuration.
+
+    Args:
+        config_dict: Raw dictionary from config.json.
+                     Validated internally against ClarificationNodeConfig.
     """
 
-    # Build the chain once at startup
+    # 1. Validate Configuration (Fail fast if invalid)
+    config = ClarificationNodeConfig(**config_dict)
+
+    # 2. Instantiate LLM from Config
+    # Unpack the LLMConfig model directly into init_chat_model
+    llm = init_chat_model(**config.llm.model_dump(exclude_none=True))
+
+    # 3. Build the chain once at startup
     clarification_chain = build_clarification_chain(llm)
 
+    # 4. Define Runtime Node
     def request_clarification_node(state: AssistantState) -> Dict[str, Any]:
         """
         Executes the clarification logic.
@@ -34,51 +48,44 @@ def make_clarification_node(
            (This is low-precision fallback: "What did you mean?")
         """
 
-        # --- 1. Check for High-Precision Questions from Process ---
+        # --- A. Check for High-Precision Questions from Process ---
 
         # Check ProcessPlan (from Planner)
         plan = state.get("process_plan")
-        if plan and plan.needs_clarification and plan.clarification_question:
-            return {
-                "response": plan.clarification_question,
-                "safe": True
-            }
-
-        # Check GroundingMetadata (from Execution Agent)
-        meta = state.get("grounding_metadata")
-        # Metadata might be a Pydantic model or a dict depending on upstream processing
-        if meta:
-            if isinstance(meta, dict):
-                question = meta.get("clarification_question")
-            else:
-                question = getattr(meta, "clarification_question", None)
-
-            if question:
-                return {
-                    "response": question,
-                    "safe": True
-                }
-
-        # --- 2. Fallback: Generic Clarification ---
-        # If we reached here, it means the INTENT node sent us here directly
-        # or the downstream nodes failed to specify *what* was missing.
+        conversation_state = state.get("conversation_state", {})
+        intent_metadata = state.get("intent_metadata", {})
+        user_profile = state.get("user_profile", {})
 
         messages = state.get("messages", [])
-        if not messages:
+        trimmed_messages = trim_conversation_history(
+            messages, max_messages=config.max_history_limit
+        )
+        context = [SystemMessage(content=CLARIFICATION_SYSTEM_STRING)]
+        if plan_msg := serialize_context_to_json(plan,"PlanStep"):
+            context += [AIMessage(content=plan_msg)]
+        if conversation_state_msg := serialize_context_to_json(conversation_state, "ConversationState"):
+            context += [AIMessage(content=conversation_state_msg)]
+        if intent_metadata_msg := serialize_context_to_json(intent_metadata, "IntentMetadata"):
+            context += [AIMessage(content=intent_metadata_msg)]
+        if user_profile_msg := serialize_context_to_json(user_profile, "UserProfile"):
+            context += [SystemMessage(content=user_profile_msg)]
+        context += trimmed_messages
+
+
+
+
+
+        # --- B. Fallback: Generic Clarification ---
+
+        if not trimmed_messages:
             return {"response": "I'm listening. How can I help?"}
 
-        last_user_msg = messages[-1]
-        user_text = (
-            last_user_msg.content
-            if hasattr(last_user_msg, "content")
-            else str(last_user_msg)
-        )
 
         # Invoke the generic chain
-        question = clarification_chain.invoke({"user_input": user_text})
+        response = clarification_chain.invoke(context)
 
         return {
-            "response": question,
+            "response": response,
             "safe": True,
         }
 

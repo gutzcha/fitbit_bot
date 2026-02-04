@@ -1,0 +1,13 @@
+Adult Vital Signs Overview
+
+Vital signs are basic measurements that reflect how well your body is functioning. They include your heart rate, blood pressure, respiratory rate and body temperature. Normal ranges can vary by age, sex, fitness level and other factors, but the following values provide general guidelines for adults.
+
+- **Resting Heart Rate:** A healthy resting pulse for adults usually falls between 60 and 100 beats per minute. Athletes and people who are very physically fit often have lower resting heart rates (sometimes in the 40s or 50s) because their hearts pump blood more efficiently. Persistently high or very low resting heart rates can indicate health problems and should be discussed with a healthcare provider.
+
+- **Blood Pressure:** Normal blood pressure for adults ranges from about 90/60 mm Hg to 120/80 mm Hg. Readings consistently above this range may indicate hypertension, while readings well below may signal hypotension. Regular monitoring helps detect changes and guides treatment.
+
+- **Respiratory Rate:** The respiratory rate measures how many breaths you take per minute. For a healthy adult at rest, a normal rate is typically between 12 and 18 breaths per minute. Rates lower than 12 or higher than 20 breaths per minute while resting could signal an underlying health problem and merit medical evaluation.
+
+- **Body Temperature:** The average body temperature is around 98.6 °F (37 °C), but a normal range for adults is roughly 97.8 to 99.1 °F (36.5 to 37.3 °C). Body temperature can vary throughout the day and may be affected by activity, hormonal changes and environmental conditions. A temperature of 100.4 °F (38 °C) or higher is generally considered a fever, while a drop below 95 °F (35 °C) is regarded as hypothermia. If you have a fever or feel abnormally cold, contact a health professional, particularly if you have symptoms such as confusion, chest pain or difficulty breathing.
+
+Vital signs provide a snapshot of your overall health. They can change with physical activity, stress, illness and medications. Tracking them regularly and sharing any concerns with a healthcare provider can help detect health issues early and support better long-term wellness.
