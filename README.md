@@ -219,6 +219,7 @@ Legacy tests in `tests/` are not kept in sync with the current graph flow.
 - Source grounding is incomplete. Classes like `Fact` and `SourceRef` exist in `graph/schemas.py`, but the runtime does not enforce that responses are grounded only in retrieved sources. This can allow hallucinations.
 - RAG quality depends on the generated knowledge base and should not be treated as authoritative.
 - The Fitbit dataset covers a single month in 2016. The system also hardcodes "today" as `2016-04-11` in `graph/consts.py`.
+- Add node-level instrumentation and self-reporting, enabling each node to emit structured logs of its decisions and actions for transparent visualization in the Streamlit UI
 
 ## Acknowledgments
 
