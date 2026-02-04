@@ -32,6 +32,8 @@ def _format_responses() -> str:
 
 EX_SIMPLE = """
 <example_1>
+**Notes**: The user is asking about a specific metric from their personal information, the intent is clearly "METRIC_RETRIEVAL"
+ 
 [CONVERSATION HISTORY]
 User: "How many steps did I take today?"
 
@@ -51,6 +53,9 @@ User: "How many steps did I take today?"
 
 EX_CONTEXTUAL = """
 <example_2>
+**Notes**: The user is asking about their personal information, though by itself, the question is unclear, 
+but in the context of the conversation, it is clear that the user wants to know about their heart rate.
+
 [CONVERSATION HISTORY]
 User: "How am I doing?"
 Assistant: "Are you asking about your sleep, activity, or heart rate?"
@@ -91,6 +96,8 @@ User: "Why is it like that?"
 
 EX_GREETING = """
 <example_4>
+**Notes**: This is a general greeting 
+
 [CONVERSATION HISTORY]
 User: "Hello, good morning!"
 
@@ -110,6 +117,9 @@ User: "Hello, good morning!"
 
 EX_CAPABILITY = """
 <example_5>
+**Notes**: The user is specifically asking the assistant about the assistant's capabilities, asking about what data it can provide or what tools it can use.
+  
+
 [CONVERSATION HISTORY]
 User: "how am i"
 Assistant: "Are you checking your sleep or steps?"
